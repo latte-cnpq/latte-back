@@ -20,16 +20,18 @@ This project bois down to the back-end application.
 ## Environment Configuration
 
 1. ### User creation in the database
-```postgresql
+```sql
 --Create de USER that we use to link with our application
+
 CREATE USER latte_admin  WITH PASSWORD 'latte_admin' SUPERUSER CREATEDB;
 
 -- To verify if the user was created
+    
 SELECT * from pg_catalog.pg_user;
 ```
 
 2. ### Database creation
 
-```postgresql
+```sql
 CREATE DATABASE latte-db;
-````
+```
