@@ -12,7 +12,7 @@ Este projeto se resume à aplicação de back-end.
 ## Requisitos do ambiente
 
 * __SDK__: Java 17
-* __Framework__: Spring Boot
+* __Framework__: Spring Boot 3.0.2
 * __Database__: PostgresSQL 14
 * __Data Base Manager__: DBeaver or pgAdmin
 
@@ -68,7 +68,7 @@ This project bois down to the back-end application.
 ## Environment requirements
 
 * __SDK__: Java 17
-* __Framework__: Spring Boot
+* __Framework__: Spring Boot 3.0.2
 * __Database__: PostgresSQL 14
 * __Data Base Manager__: DBeaver or pgAdmin
 
