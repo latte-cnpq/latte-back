@@ -14,11 +14,11 @@ import java.util.UUID;
 @Service
 public class InstituteService implements IInstituteService {
 
-    private final IInstituteRepository instituteRepository;
+    private final IInstituteRepository _instituteRepository;
 
     public InstituteService(IInstituteRepository instituteRepository) {
 
-        this.instituteRepository = instituteRepository;
+        this._instituteRepository = instituteRepository;
     }
 
     @Override
@@ -31,17 +31,17 @@ public class InstituteService implements IInstituteService {
         var institute = new Institute();
         BeanUtils.copyProperties(instituteDto, institute);
 
-        return instituteRepository.save(institute);
+        return _instituteRepository.save(institute);
     }
 
     @Override
     public List<Institute> getAll() {
-        return instituteRepository.findAll();
+        return _instituteRepository.findAll();
     }
 
     @Override
     public Institute getById(UUID id) {
-        var institute = instituteRepository.findById(id);
+        var institute = _instituteRepository.findById(id);
 
         if(!institute.isPresent()) {
             throw new IllegalArgumentException("Não há instituto cadastrado");
@@ -52,24 +52,41 @@ public class InstituteService implements IInstituteService {
 
     @Override
     public void delete(UUID id) {
-        var institute = instituteRepository.findById(id);
 
-        if(!institute.isPresent()) {
-            throw new IllegalArgumentException("Não há instituto cadastrado");
+        var existInstitute = _instituteRepository.existsById(id);
+
+        if(!existInstitute) {
+            throw new IllegalArgumentException("Não há instituto cadastrado com esse id");
         }
-        instituteRepository.delete(institute.get());
+
+        _instituteRepository.deleteById(id);
     }
 
     @Override
     public Institute update(InstituteDto instituteDto) {
         if(instituteDto == null) {
             throw new IllegalArgumentException("Objeto instituto nulo");
+
         }
 
-        var institute = new Institute();
-        BeanUtils.copyProperties(instituteDto, institute);
-        institute.setId(instituteDto.getId());
+        var foundInstitute = _instituteRepository.findById(instituteDto.getId());
 
-        return instituteRepository.save(institute);
+        if(!foundInstitute.isPresent()) {
+            throw new IllegalArgumentException("Instituto não encontrado");
+        }
+
+        foundInstitute.get().setName(instituteDto.getName());
+        foundInstitute.get().setAcronym(instituteDto.getAcronym());
+
+        return _instituteRepository.save(foundInstitute.get());
+    }
+
+    @Override
+    public List<Institute> filterInstituteByTextSearch(String textSearch) {
+        if(textSearch.isBlank() || textSearch.isEmpty()) {
+           return getAll();
+        }
+
+        return _instituteRepository.findByNameContainingIgnoreCaseAndAcronymContainingIgnoreCase(textSearch, textSearch);
     }
 }

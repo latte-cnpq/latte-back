@@ -1,8 +1,11 @@
 package br.edu.femass.latteback.dto;
 
+import jakarta.annotation.Nullable;
+
 import java.util.UUID;
 
 public class InstituteDto {
+    @Nullable
     private UUID id;
     private String name;
     private String acronym;

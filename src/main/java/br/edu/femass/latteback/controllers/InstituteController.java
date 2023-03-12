@@ -1,24 +1,23 @@
 package br.edu.femass.latteback.controllers;
 
 import br.edu.femass.latteback.dto.InstituteDto;
-import br.edu.femass.latteback.services.interfaces.IInstituteService;
+import br.edu.femass.latteback.models.Institute;
+import br.edu.femass.latteback.services.InstituteService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/Institute")
 public class InstituteController {
+    private final InstituteService instituteService;
 
-    private final IInstituteService instituteService;
-
-
-    public InstituteController(
-            IInstituteService instituteService
-    ) {
+    public InstituteController(InstituteService instituteService) {
         this.instituteService = instituteService;
     }
 
@@ -43,6 +42,12 @@ public class InstituteController {
         }
     }
 
+    @GetMapping("/ExecuteFilter/{textSearch}")
+    public ResponseEntity<List<Institute>> executeFilter(@PathVariable(value = "textSearch") String textSearch) {
+        var institutes = instituteService.filterInstituteByTextSearch(textSearch);
+        return ResponseEntity.status(HttpStatus.FOUND).body(institutes);
+    }
+
     //endregion
 
     //region Command
@@ -65,6 +70,17 @@ public class InstituteController {
             return  ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(e.getMessage());
         }
     }
+
+    @DeleteMapping ("/{id}")
+    public ResponseEntity<Object> deleteInstitute(@PathVariable(value = "id") UUID id) {
+        try {
+            instituteService.delete(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return  ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(e.getMessage());
+        }
+    }
+
 
     //endregion
 
