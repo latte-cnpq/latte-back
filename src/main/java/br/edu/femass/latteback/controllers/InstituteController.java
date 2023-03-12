@@ -42,8 +42,8 @@ public class InstituteController {
         }
     }
 
-    @GetMapping("/ExecuteFilter/{textSearch}")
-    public ResponseEntity<List<Institute>> executeFilter(@PathVariable(value = "textSearch") String textSearch) {
+    @GetMapping("/ExecuteFilter")
+    public ResponseEntity<List<Institute>> executeFilter(@RequestParam(value = "textSearch", required = true) String textSearch) {
         var institutes = instituteService.filterInstituteByTextSearch(textSearch);
         return ResponseEntity.status(HttpStatus.FOUND).body(institutes);
     }

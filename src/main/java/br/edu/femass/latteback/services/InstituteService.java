@@ -87,6 +87,6 @@ public class InstituteService implements IInstituteService {
            return getAll();
         }
 
-        return _instituteRepository.findByNameContainingIgnoreCaseAndAcronymContainingIgnoreCase(textSearch, textSearch);
+        return _instituteRepository.findByNameContainsIgnoreCaseOrAcronymContainsIgnoreCase(textSearch, textSearch);
     }
 }

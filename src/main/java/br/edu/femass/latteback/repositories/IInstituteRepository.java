@@ -9,6 +9,7 @@ import java.util.UUID;
 
 @Repository
 public interface IInstituteRepository extends JpaRepository<Institute, UUID> {
-    List<Institute> findByNameContainingIgnoreCaseAndAcronymContainingIgnoreCase(String name, String acronym);
+    List<Institute> findByNameContainsIgnoreCaseOrAcronymContainsIgnoreCase(String name, String acronym);
+
 
 }
