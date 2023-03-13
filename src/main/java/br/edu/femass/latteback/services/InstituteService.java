@@ -4,6 +4,7 @@ import br.edu.femass.latteback.dto.InstituteDto;
 import br.edu.femass.latteback.models.Institute;
 import br.edu.femass.latteback.repositories.IInstituteRepository;
 import br.edu.femass.latteback.services.interfaces.IInstituteService;
+import br.edu.femass.latteback.utils.enums.InstituteField;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -84,14 +85,14 @@ public class InstituteService implements IInstituteService {
     }
 
     @Override
-    public List<Institute> filterInstituteByTextSearch(String textSearch, int field) {
+    public List<Institute> filterInstituteByTextSearch(String textSearch, InstituteField field) {
         if(textSearch.isBlank() || textSearch.isEmpty()) {
            return getAll();
         }
 
         return switch (field) {
-            case 1 -> _instituteRepository.findByNameContainsIgnoreCase(textSearch);
-            case 2 -> _instituteRepository.findByAcronymContainsIgnoreCase(textSearch);
+            case NAME -> _instituteRepository.findByNameContainsIgnoreCase(textSearch);
+            case  ACRONYM-> _instituteRepository.findByAcronymContainsIgnoreCase(textSearch);
             default -> _instituteRepository.findByNameContainsIgnoreCaseOrAcronymContainsIgnoreCase(textSearch, textSearch);
         };
     }

@@ -2,6 +2,7 @@ package br.edu.femass.latteback.services.interfaces;
 
 import br.edu.femass.latteback.dto.InstituteDto;
 import br.edu.femass.latteback.models.Institute;
+import br.edu.femass.latteback.utils.enums.InstituteField;
 
 import java.util.List;
 import java.util.UUID;
@@ -11,5 +12,5 @@ public interface IInstituteService {
     Institute getById(UUID id);
     void delete(UUID id);
     Institute update(InstituteDto instituteDto);
-    List<Institute> filterInstituteByTextSearch(String textSearch, int field);
+    List<Institute> filterInstituteByTextSearch(String textSearch,  InstituteField field);
 }

@@ -3,6 +3,7 @@ package br.edu.femass.latteback.controllers;
 import br.edu.femass.latteback.dto.InstituteDto;
 import br.edu.femass.latteback.models.Institute;
 import br.edu.femass.latteback.services.InstituteService;
+import br.edu.femass.latteback.utils.enums.InstituteField;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,10 +45,10 @@ public class InstituteController {
     @GetMapping("/ExecuteFilter")
     public ResponseEntity<List<Institute>> executeFilter(
             @RequestParam(value = "textSearch") String textSearch,
-            @RequestParam(value = "field") int field
+            @RequestParam(value = "field") InstituteField field
     ) {
         var institutes = instituteService.filterInstituteByTextSearch(textSearch, field);
-        return ResponseEntity.status(HttpStatus.OK).body(institutes);
+        return ResponseEntity.status(HttpStatus.FOUND).body(institutes);
     }
 
     //endregion
