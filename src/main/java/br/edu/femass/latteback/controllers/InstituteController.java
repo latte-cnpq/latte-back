@@ -3,7 +3,7 @@ package br.edu.femass.latteback.controllers;
 import br.edu.femass.latteback.dto.InstituteDto;
 import br.edu.femass.latteback.models.Institute;
 import br.edu.femass.latteback.services.InstituteService;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.edu.femass.latteback.utils.enums.InstituteField;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +26,7 @@ public class InstituteController {
     public ResponseEntity<Object> getAllInstitute() {
         try {
             var institutes = instituteService.getAll();
-            return ResponseEntity.status(HttpStatus.FOUND).body(institutes);
+            return ResponseEntity.status(HttpStatus.OK).body(institutes);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -36,15 +36,18 @@ public class InstituteController {
     public ResponseEntity<Object> getById(@PathVariable(value = "id") UUID id) {
         try {
             var institute = instituteService.getById(id);
-            return ResponseEntity.status(HttpStatus.FOUND).body(institute);
+            return ResponseEntity.status(HttpStatus.OK).body(institute);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @GetMapping("/ExecuteFilter")
-    public ResponseEntity<List<Institute>> executeFilter(@RequestParam(value = "textSearch", required = true) String textSearch) {
-        var institutes = instituteService.filterInstituteByTextSearch(textSearch);
+    public ResponseEntity<List<Institute>> executeFilter(
+            @RequestParam(value = "textSearch") String textSearch,
+            @RequestParam(value = "field") InstituteField field
+    ) {
+        var institutes = instituteService.filterInstituteByTextSearch(textSearch, field);
         return ResponseEntity.status(HttpStatus.FOUND).body(institutes);
     }
 
