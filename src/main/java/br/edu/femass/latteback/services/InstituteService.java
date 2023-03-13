@@ -29,6 +29,8 @@ public class InstituteService implements IInstituteService {
         }
 
         var institute = new Institute();
+        institute.setName(instituteDto.getName());
+        institute.setAcronym(instituteDto.getAcronym());
         BeanUtils.copyProperties(instituteDto, institute);
 
         return _instituteRepository.save(institute);
@@ -82,11 +84,15 @@ public class InstituteService implements IInstituteService {
     }
 
     @Override
-    public List<Institute> filterInstituteByTextSearch(String textSearch) {
+    public List<Institute> filterInstituteByTextSearch(String textSearch, int field) {
         if(textSearch.isBlank() || textSearch.isEmpty()) {
            return getAll();
         }
 
-        return _instituteRepository.findByNameContainsIgnoreCaseOrAcronymContainsIgnoreCase(textSearch, textSearch);
+        return switch (field) {
+            case 1 -> _instituteRepository.findByNameContainsIgnoreCase(textSearch);
+            case 2 -> _instituteRepository.findByAcronymContainsIgnoreCase(textSearch);
+            default -> _instituteRepository.findByNameContainsIgnoreCaseOrAcronymContainsIgnoreCase(textSearch, textSearch);
+        };
     }
 }

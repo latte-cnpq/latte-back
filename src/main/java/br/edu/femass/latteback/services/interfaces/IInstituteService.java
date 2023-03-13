@@ -11,5 +11,5 @@ public interface IInstituteService {
     Institute getById(UUID id);
     void delete(UUID id);
     Institute update(InstituteDto instituteDto);
-    List<Institute> filterInstituteByTextSearch(String textSearch);
+    List<Institute> filterInstituteByTextSearch(String textSearch, int field);
 }
