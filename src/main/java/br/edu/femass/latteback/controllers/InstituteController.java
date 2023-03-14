@@ -48,7 +48,7 @@ public class InstituteController {
             @RequestParam(value = "field") InstituteField field
     ) {
         var institutes = instituteService.filterInstituteByTextSearch(textSearch, field);
-        return ResponseEntity.status(HttpStatus.FOUND).body(institutes);
+        return ResponseEntity.status(HttpStatus.OK).body(institutes);
     }
 
     //endregion
