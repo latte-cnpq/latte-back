@@ -44,10 +44,14 @@ public class InstituteService implements IInstituteService {
 
     @Override
     public Institute getById(UUID id) {
+        if(id == null){
+            throw new IllegalArgumentException("ID procurado não pode ser nulo.");
+        }
+
         var institute = _instituteRepository.findById(id);
 
         if(!institute.isPresent()) {
-            throw new IllegalArgumentException("Não há instituto cadastrado");
+            throw new IllegalArgumentException("Não há instituto cadastrado com esse id");
         }
 
         return  institute.get();
@@ -86,7 +90,7 @@ public class InstituteService implements IInstituteService {
 
     @Override
     public List<Institute> filterInstituteByTextSearch(String textSearch, InstituteField field) {
-        if(textSearch.isBlank() || textSearch.isEmpty()) {
+        if(textSearch == null || textSearch.isBlank() || textSearch.isEmpty()) {
            return getAll();
         }
 

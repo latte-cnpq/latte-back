@@ -29,4 +29,8 @@ public class InstituteDto {
     public void setAcronym(String acronym) {
         this.acronym = acronym;
     }
+    //Necessário para testes
+    public void setId(UUID id) {
+        this.id = id;
+    }
 }
