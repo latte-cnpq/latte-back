@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import br.edu.femass.latteback.dto.ResearcherCacheDto;
 import br.edu.femass.latteback.dto.ResearcherDto;
 import br.edu.femass.latteback.models.Researcher;
 import br.edu.femass.latteback.models.ResearcherCache;
