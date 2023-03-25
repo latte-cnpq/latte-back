@@ -1,11 +1,9 @@
 package br.edu.femass.latteback.services;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import br.edu.femass.latteback.dto.ResearcherDto;
 import br.edu.femass.latteback.models.Researcher;
 import br.edu.femass.latteback.models.ResearcherCache;
@@ -13,10 +11,8 @@ import br.edu.femass.latteback.repositories.ResearcherCacheRepository;
 import br.edu.femass.latteback.repositories.ResearcherRepository;
 import br.edu.femass.latteback.services.interfaces.RResearcherService;
 import br.edu.femass.latteback.utils.enums.ResearcherField;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
-
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
