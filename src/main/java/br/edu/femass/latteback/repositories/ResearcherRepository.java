@@ -10,5 +10,7 @@ import java.util.UUID;
 public interface ResearcherRepository extends JpaRepository<Researcher, UUID> {
     List<Researcher> findByNameContainsIgnoreCase(String name);
     Optional<Researcher> findFirstByResearcheridNumberContainsIgnoreCase(String researcheridNumber);
-
+    List<Researcher> findByNameStartsWith(String name);
+    List<Researcher> findByNameContainsIgnoreCaseOrFirstByResearcheridNumberContainsIgnoreCase(String name, String researcheridNumber);
+    
 }

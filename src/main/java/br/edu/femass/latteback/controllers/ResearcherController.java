@@ -1,18 +1,21 @@
 package br.edu.femass.latteback.controllers;
 
 import br.edu.femass.latteback.dto.ResearcherDto;
+import br.edu.femass.latteback.models.Researcher;
 import br.edu.femass.latteback.services.ResearcherService;
+import br.edu.femass.latteback.utils.enums.ResearcherField;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/Researcher")
 public class ResearcherController {
-    
     private final ResearcherService ResearcherService;
 
     public ResearcherController(ResearcherService ResearcherService) {
@@ -40,15 +43,14 @@ public class ResearcherController {
         }
     }
 
-    /*@GetMapping("/ExecuteFilter")
+    @GetMapping("/ExecuteFilter")
     public ResponseEntity<List<Researcher>> executeFilter(
             @RequestParam(value = "textSearch") String textSearch,
-            @RequestParam(value = "field") ResearcherField field
-    ) {
-        var Researchers = ResearcherService.filterResearcherByTextSearch(textSearch, field);
-        return ResponseEntity.status(HttpStatus.OK).body(Researchers);
-    }*/
-    //TODO:Filtragem de pesquisador
+            @RequestParam(value = "field") ResearcherField field) {
+        var researchers = ResearcherService.filterResearcherByTextSearch(textSearch, field);
+        return ResponseEntity.status(HttpStatus.OK).body(researchers);
+    }
+    
     //endregion
 
     //region Command

@@ -13,6 +13,7 @@ import br.edu.femass.latteback.models.ResearcherCache;
 import br.edu.femass.latteback.repositories.ResearcherCacheRepository;
 import br.edu.femass.latteback.repositories.ResearcherRepository;
 import br.edu.femass.latteback.services.interfaces.RResearcherService;
+import br.edu.femass.latteback.utils.enums.ResearcherField;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -155,7 +156,7 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
         var researcher = _researcherRepository.findById(id);
 
         if(researcher.isEmpty()) {
-            throw new IllegalArgumentException("Não há instituto cadastrado com esse id");
+            throw new IllegalArgumentException("Não há pesquisador cadastrado com esse id");
         }
 
         return  researcher.get();
@@ -165,16 +166,43 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
         var existResearcher = _researcherRepository.existsById(id);
 
         if(!existResearcher) {
-            throw new IllegalArgumentException("Não há instituto cadastrado com esse id");
+            throw new IllegalArgumentException("Não há pesquisador cadastrado com esse id");
         }
 
         _researcherRepository.deleteById(id);
 
     }
-    //Todo: Researcher update
+    //Todo: Researcher update -- verificar se ta ok
     public Researcher update(ResearcherDto researcherDto){
-        throw new IllegalArgumentException();
+        if(researcherDto == null) {
+            throw new IllegalArgumentException("Objeto pesquisador nulo");
+
+        }
+
+        var foundResearcher = _researcherRepository.findById(researcherDto.getId());
+
+        if(!foundResearcher.isPresent()) {
+            throw new IllegalArgumentException("Pesquisador não encontrado");
+        }
+
+        foundResearcher.get().setName(researcherDto.getName());
+        foundResearcher.get().setEmail(researcherDto.getEmail());
+        foundResearcher.get().setResearcheridNumber(researcherDto.getResearcheridNumber());
+        foundResearcher.get().setResume(researcherDto.getResume());
+
+        return _researcherRepository.save(foundResearcher.get());
     }
 
+    public List<Researcher> filterResearcherByTextSearch(String textSearch, ResearcherField field) {
+        if(textSearch == null || textSearch.isBlank() || textSearch.isEmpty()) {
+           return getAll();
+        }
+
+        return switch (field) {
+            case NAME -> _researcherRepository.findByNameContainsIgnoreCase(textSearch);
+            case RESEARCHERIDNUMBER -> _researcherRepository.findByNameContainsIgnoreCaseOrFirstByResearcheridNumberContainsIgnoreCase(textSearch, textSearch);
+            default -> _researcherRepository.findByNameContainsIgnoreCaseOrFirstByResearcheridNumberContainsIgnoreCase(textSearch, textSearch);
+        };
+    }
 }
 
