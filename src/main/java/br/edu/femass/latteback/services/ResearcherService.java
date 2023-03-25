@@ -172,7 +172,7 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
         _researcherRepository.deleteById(id);
 
     }
-    //Todo: Researcher update -- verificar se ta ok
+ 
     public Researcher update(ResearcherDto researcherDto){
         if(researcherDto == null) {
             throw new IllegalArgumentException("Objeto pesquisador nulo");

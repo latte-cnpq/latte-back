@@ -34,6 +34,4 @@ public class ResearcherCache {
         this.researcheridNumber = researcheridNumber;
         this.fileName = fileName;
     }
-
-    
 }
