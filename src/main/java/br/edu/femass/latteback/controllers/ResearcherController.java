@@ -71,17 +71,17 @@ public class ResearcherController {
         }
     }
 
-    @GetMapping("/SearchResearcher")
-    public ResponseEntity<Object> searchResearcher(@RequestBody SearchResearchDto dto) {
+    @GetMapping("/SearchResearcher/{id}")
+    public ResponseEntity<Object> searchResearcher(@PathVariable(value = "id") String researcherIdNumber) {
         try {
 //            var Researcher = ResearcherService.searchFiles(dto.getResearcherIdNumber());
-            var researcherCache = ResearcherCacheService.findFirstByResearcheridNumber(dto.getResearcherIdNumber());
+            var researcherCache = ResearcherCacheService.findFirstByResearcheridNumber(researcherIdNumber);
 
             if(researcherCache.isPresent()){
                 return ResponseEntity.status(HttpStatus.OK).body(researcherCache);
             }
 
-            var searchResearcherCache = ResearcherService.searchFiles(dto.getResearcherIdNumber());
+            var searchResearcherCache = ResearcherService.searchFiles(researcherIdNumber);
 
             return ResponseEntity.status(HttpStatus.OK).body(searchResearcherCache);
 
