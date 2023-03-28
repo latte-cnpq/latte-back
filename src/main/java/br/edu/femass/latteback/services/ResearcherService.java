@@ -13,6 +13,8 @@ import br.edu.femass.latteback.services.interfaces.RResearcherService;
 import br.edu.femass.latteback.utils.enums.ResearcherField;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,6 +58,12 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
         else {
             researcherFile = searchFiles(researcheridNumber).getFileName();
         }
+
+        var researcher = new Researcher();
+        researcher.setName(researcheridNumber);
+        researcher.setResearcheridNumber(researcheridNumber);
+        BeanUtils.copyProperties(researcheridNumber, researcherFile);
+        
         return (_researcherRepository.save(getResearcherFromFile(researcherFile)));
     }
 
