@@ -71,10 +71,10 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
     }
 
     public ResearcherCache searchFiles(String researcherNumber){
+
         try{
             File folder = new File(resumePath);
             File[] files = folder.listFiles();
-            
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -82,25 +82,24 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
             //Atravessa pelos arquivos xml na pasta
             for (File file : files) {
                 if (file.isFile() && file.getName().contains(".xml") && !filesOnCache.contains(file.getName())) {
+                    String identificationNumber = file.getName().replace(".xml", "").trim();
 
                     Document doc = dBuilder.parse(file);
                     doc.getDocumentElement().normalize();
 
                     Node curriculoVitae = doc.getElementsByTagName("CURRICULO-VITAE").item(0);
                     Element curriculoVitaeElement = (Element) curriculoVitae;
-                    String numeroIdentificador = curriculoVitaeElement.getAttribute("NUMERO-IDENTIFICADOR");
                     
                     Node dadosGerais = doc.getElementsByTagName("DADOS-GERAIS").item(0);
                     Element dadosGeraisElement = (Element) dadosGerais;
                     String nomeCompleto = dadosGeraisElement.getAttribute("NOME-COMPLETO");
 
-
                     //Salva pesquisador em cache
-                    ResearcherCache researcherCache = new ResearcherCache(nomeCompleto,numeroIdentificador, file.getName());
+                    ResearcherCache researcherCache = new ResearcherCache(nomeCompleto,identificationNumber, file.getName());
                     _researcherCacheRepository.save(researcherCache);
                     filesOnCache.add(file.getName());
 
-                    if (researcherNumber.equals(numeroIdentificador))
+                    if (researcherNumber.equals(identificationNumber))
                     {
                         return researcherCache;
                     }

@@ -4,6 +4,7 @@ import br.edu.femass.latteback.dto.ResearcherDto;
 import br.edu.femass.latteback.dto.SearchResearchDto;
 import br.edu.femass.latteback.models.Researcher;
 import br.edu.femass.latteback.dto.ResearcherFormDto;
+import br.edu.femass.latteback.repositories.ResearcherCacheRepository;
 import br.edu.femass.latteback.services.InstituteService;
 import br.edu.femass.latteback.services.ResearcherService;
 import br.edu.femass.latteback.utils.enums.ResearcherField;
@@ -20,11 +21,11 @@ import java.util.UUID;
 @RequestMapping("/Researcher")
 public class ResearcherController {
     private final ResearcherService ResearcherService;
-    private final InstituteService InstituteService;
+    private final ResearcherCacheRepository ResearcherCacheService;
 
-    public ResearcherController(ResearcherService ResearcherService, InstituteService InstituteService) {
+    public ResearcherController(ResearcherService ResearcherService, InstituteService InstituteService, ResearcherCacheRepository ResearcherCacheService) {
         this.ResearcherService = ResearcherService;
-        this.InstituteService = InstituteService;
+        this.ResearcherCacheService = ResearcherCacheService;
     }
 
     //region Queries
@@ -51,8 +52,17 @@ public class ResearcherController {
     @GetMapping("/SearchResearcher")
     public ResponseEntity<Object> searchResearcher(@RequestBody SearchResearchDto dto) {
         try {
-            var Researcher = ResearcherService.searchFiles(dto.getResearcherIdNumber());
-            return ResponseEntity.status(HttpStatus.OK).body(Researcher);
+//            var Researcher = ResearcherService.searchFiles(dto.getResearcherIdNumber());
+            var researcherCache = ResearcherCacheService.findFirstByResearcheridNumber(dto.getResearcherIdNumber());
+
+            if(researcherCache.isPresent()){
+                return ResponseEntity.status(HttpStatus.OK).body(researcherCache);
+            }
+
+            var searchResearcherCache = ResearcherService.searchFiles(dto.getResearcherIdNumber());
+
+            return ResponseEntity.status(HttpStatus.OK).body(searchResearcherCache);
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
