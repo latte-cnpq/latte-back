@@ -1,6 +1,7 @@
 package br.edu.femass.latteback.services.interfaces;
 
 import br.edu.femass.latteback.dto.ResearcherDto;
+import br.edu.femass.latteback.models.Institute;
 import br.edu.femass.latteback.models.Researcher;
 import br.edu.femass.latteback.models.ResearcherCache;
 
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 public interface RResearcherService {
-    Researcher save(String researcheridNumber);
+    Researcher save(String researcheridNumber, UUID instituteId);
     List<Researcher> getAll();
     Researcher getById(UUID id);
     void delete(UUID id);
