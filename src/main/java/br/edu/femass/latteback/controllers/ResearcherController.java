@@ -1,7 +1,9 @@
 package br.edu.femass.latteback.controllers;
 
 import br.edu.femass.latteback.dto.ResearcherDto;
+import br.edu.femass.latteback.dto.ResearcherWithInstituteDTO;
 import br.edu.femass.latteback.dto.SearchResearchDto;
+import br.edu.femass.latteback.models.Institute;
 import br.edu.femass.latteback.models.Researcher;
 import br.edu.femass.latteback.dto.ResearcherFormDto;
 import br.edu.femass.latteback.repositories.ResearcherCacheRepository;
@@ -15,16 +17,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/Researcher")
 public class ResearcherController {
     private final ResearcherService ResearcherService;
+    private final InstituteService InstituteService;
     private final ResearcherCacheRepository ResearcherCacheService;
 
     public ResearcherController(ResearcherService ResearcherService, InstituteService InstituteService, ResearcherCacheRepository ResearcherCacheService) {
         this.ResearcherService = ResearcherService;
+        this.InstituteService = InstituteService;
         this.ResearcherCacheService = ResearcherCacheService;
     }
 
@@ -32,8 +37,25 @@ public class ResearcherController {
     @GetMapping("/GetAll")
     public ResponseEntity<Object> getAllResearcher() {
         try {
-            var Researchers = ResearcherService.getAll();
-            return ResponseEntity.status(HttpStatus.OK).body(Researchers);
+            List<ResearcherWithInstituteDTO> researchersWithInstitutes = ResearcherService.getAll()
+                    .stream()
+                    .map(researcher -> {
+                        ResearcherWithInstituteDTO dto = new ResearcherWithInstituteDTO();
+                        dto.setId(researcher.getId());
+                        dto.setName(researcher.getName());
+                        dto.setEmail(researcher.getEmail());
+                        dto.setResearcheridNumber(researcher.getResearcheridNumber());
+                        dto.setResume(researcher.getResume());
+
+                        Institute institute = InstituteService.getById(researcher.getInstituteID());
+                        dto.setInstituteId(institute.getId());
+                        dto.setInstituteName(institute.getName());
+                        dto.setInstituteAcronym(institute.getAcronym());
+
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.OK).body(researchersWithInstitutes);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
