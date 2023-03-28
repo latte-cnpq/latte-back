@@ -1,7 +1,10 @@
 package br.edu.femass.latteback.controllers;
 
+import br.edu.femass.latteback.dto.ResearcherCacheDto;
 import br.edu.femass.latteback.dto.ResearcherDto;
+import br.edu.femass.latteback.dto.SearchResearchDto;
 import br.edu.femass.latteback.models.Researcher;
+import br.edu.femass.latteback.models.ResearcherCache;
 import br.edu.femass.latteback.services.ResearcherService;
 import br.edu.femass.latteback.utils.enums.ResearcherField;
 
@@ -43,6 +46,16 @@ public class ResearcherController {
         }
     }
 
+    @GetMapping("/SearchResearcher")
+    public ResponseEntity<Object> searchResearcher(@RequestBody SearchResearchDto dto) {
+        try {
+            var Researcher = ResearcherService.searchFiles(dto.getResearcheridNumber());
+            return ResponseEntity.status(HttpStatus.OK).body(Researcher);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/ExecuteFilter")
     public ResponseEntity<List<Researcher>> executeFilter(
             @RequestParam(value = "textSearch") String textSearch,
@@ -54,10 +67,10 @@ public class ResearcherController {
     //endregion
 
     //region Command
-    @PostMapping("/Create/{idNumber}")
-    public ResponseEntity<Object> createResearcher(@PathVariable(value = "idNumber") String researcheridNumber) {
+    @PostMapping("/Create")
+    public ResponseEntity<Object> createResearcher(@RequestBody ResearcherCacheDto dto) {
         try {
-            var result = ResearcherService.save(researcheridNumber);
+            var result = ResearcherService.save(dto.getResearcheridNumber());
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (Exception e) {
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

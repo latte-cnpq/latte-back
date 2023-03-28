@@ -9,5 +9,5 @@ public interface ResearcherRepository extends JpaRepository<Researcher, UUID> {
     List<Researcher> findByNameContainsIgnoreCase(String name);
     Optional<Researcher> findFirstByResearcheridNumberContainsIgnoreCase(String researcheridNumber);
     //List<Researcher> findByNameStartsWith(String name);
-    List<Researcher> findByNameContainsIgnoreCaseOrFirstByResearcheridNumberContainsIgnoreCase(String name, String researcheridNumber);
+    List<Researcher> findByNameContainsIgnoreCaseOrResearcheridNumber(String name, String researcheridNumber);
 }

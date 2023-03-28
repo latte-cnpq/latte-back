@@ -25,7 +25,7 @@ import jakarta.transaction.Transactional;
 public class ResearcherService implements RResearcherService {//Todo:Remover comentários se necessário
     private final ResearcherRepository _researcherRepository;
     private final ResearcherCacheRepository _researcherCacheRepository;
-    private static ArrayList<String> filesOnCache = new ArrayList<>();
+    private static final ArrayList<String> filesOnCache = new ArrayList<>();
 
     public ResearcherService(ResearcherRepository researcherRepository, ResearcherCacheRepository researcherCacheRepository) {
 
@@ -203,8 +203,8 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
 
         return switch (field) {
             case NAME -> _researcherRepository.findByNameContainsIgnoreCase(textSearch);
-            case RESEARCHERIDNUMBER -> _researcherRepository.findByNameContainsIgnoreCaseOrFirstByResearcheridNumberContainsIgnoreCase(textSearch, textSearch);
-            default -> _researcherRepository.findByNameContainsIgnoreCaseOrFirstByResearcheridNumberContainsIgnoreCase(textSearch, textSearch);
+            case RESEARCHERIDNUMBER -> _researcherRepository.findByNameContainsIgnoreCaseOrResearcheridNumber(textSearch, textSearch);
+            default -> _researcherRepository.findByNameContainsIgnoreCaseOrResearcheridNumber(textSearch, textSearch);
         };
     }
 }
