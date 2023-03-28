@@ -1,10 +1,10 @@
 package br.edu.femass.latteback.controllers;
 
-import br.edu.femass.latteback.dto.ResearcherCacheDto;
 import br.edu.femass.latteback.dto.ResearcherDto;
 import br.edu.femass.latteback.dto.SearchResearchDto;
 import br.edu.femass.latteback.models.Researcher;
-import br.edu.femass.latteback.models.ResearcherCache;
+import br.edu.femass.latteback.dto.ResearcherFormDto;
+import br.edu.femass.latteback.services.InstituteService;
 import br.edu.femass.latteback.services.ResearcherService;
 import br.edu.femass.latteback.utils.enums.ResearcherField;
 
@@ -20,9 +20,11 @@ import java.util.UUID;
 @RequestMapping("/Researcher")
 public class ResearcherController {
     private final ResearcherService ResearcherService;
+    private final InstituteService InstituteService;
 
-    public ResearcherController(ResearcherService ResearcherService) {
+    public ResearcherController(ResearcherService ResearcherService, InstituteService InstituteService) {
         this.ResearcherService = ResearcherService;
+        this.InstituteService = InstituteService;
     }
 
     //region Queries
@@ -49,7 +51,7 @@ public class ResearcherController {
     @GetMapping("/SearchResearcher")
     public ResponseEntity<Object> searchResearcher(@RequestBody SearchResearchDto dto) {
         try {
-            var Researcher = ResearcherService.searchFiles(dto.getResearcheridNumber());
+            var Researcher = ResearcherService.searchFiles(dto.getResearcherIdNumber());
             return ResponseEntity.status(HttpStatus.OK).body(Researcher);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -68,9 +70,10 @@ public class ResearcherController {
 
     //region Command
     @PostMapping("/Create")
-    public ResponseEntity<Object> createResearcher(@RequestBody ResearcherCacheDto dto) {
+    public ResponseEntity<Object> createResearcher(@RequestBody ResearcherFormDto formData) {
+
         try {
-            var result = ResearcherService.save(dto.getResearcheridNumber());
+            var result = ResearcherService.save(formData.getResearcherIdNumber(), formData.getInstituteId());
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (Exception e) {
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

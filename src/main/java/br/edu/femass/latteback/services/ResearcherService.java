@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import br.edu.femass.latteback.dto.ResearcherDto;
+import br.edu.femass.latteback.models.Institute;
 import br.edu.femass.latteback.models.Researcher;
 import br.edu.femass.latteback.models.ResearcherCache;
 import br.edu.femass.latteback.repositories.ResearcherCacheRepository;
@@ -41,8 +42,8 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
     
     @Override
     @Transactional
-    public Researcher save(String researcheridNumber) {
-        if(researcheridNumber.isBlank()) {
+    public Researcher save(String researcheridNumber, UUID instituteId) {
+        if( researcheridNumber.isEmpty() || researcheridNumber.isBlank()) {
             throw new IllegalArgumentException("Número do pesquisador não informado.");
         }
         if (_researcherRepository.findFirstByResearcheridNumberContainsIgnoreCase(researcheridNumber).isPresent()){
@@ -59,12 +60,10 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
             researcherFile = searchFiles(researcheridNumber).getFileName();
         }
 
-        var researcher = new Researcher();
-        researcher.setName(researcheridNumber);
-        researcher.setResearcheridNumber(researcheridNumber);
-        BeanUtils.copyProperties(researcheridNumber, researcherFile);
+        var researcher = getResearcherFromFile(researcherFile);
+        researcher.setInstituteID(instituteId);
         
-        return (_researcherRepository.save(getResearcherFromFile(researcherFile)));
+        return (_researcherRepository.save(researcher));
     }
 
     public Optional<ResearcherCache> findResearcherOnCache(String researcheridNumber){
