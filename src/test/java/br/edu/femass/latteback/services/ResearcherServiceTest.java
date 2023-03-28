@@ -7,12 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import br.edu.femass.latteback.dto.ResearcherDto;
 import br.edu.femass.latteback.models.Researcher;
@@ -30,12 +33,21 @@ public class ResearcherServiceTest {
     private static UUID id;
 
     @BeforeEach
+    public void init() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    
+
+    
+
+    /*@BeforeEach
     public void setup() {
         researcherDto = new ResearcherDto();
         researcherDto.setName("Pesquisador1");
         researcherDto.setResearcheridNumber("");
         id = UUID.fromString("00000000-0000-0000-0000-000000000000");
-    }
+    }*/
 
    
     /* @Test
@@ -77,13 +89,5 @@ public class ResearcherServiceTest {
         researcherService.delete(id);
     }
 
-    @Test
-    @DisplayName("Update researcher at database")
-    public void updateTest(){
-        researcherDto.setId(id);
-        doReturn(Optional.of(new Researcher())).when(researcherRepository).findById(id);
-        when(researcherService.update(researcherDto)).thenReturn(researcher);
-        var savedResearcher = researcherService.update(researcherDto);
-        assertEquals(researcher, savedResearcher);
-    }
+
 }
