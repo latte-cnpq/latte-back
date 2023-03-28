@@ -91,11 +91,28 @@ public class ResearcherController {
     }
 
     @GetMapping("/ExecuteFilter")
-    public ResponseEntity<List<Researcher>> executeFilter(
+    public ResponseEntity<List<ResearcherWithInstituteDTO>> executeFilter(
             @RequestParam(value = "textSearch") String textSearch,
             @RequestParam(value = "field") ResearcherField field) {
-        var researchers = ResearcherService.filterResearcherByTextSearch(textSearch, field);
-        return ResponseEntity.status(HttpStatus.OK).body(researchers);
+        List<ResearcherWithInstituteDTO> researchersWithInstitutes = ResearcherService.filterResearcherByTextSearch(textSearch, field)
+                .stream()
+                .map(researcher -> {
+                    ResearcherWithInstituteDTO dto = new ResearcherWithInstituteDTO();
+                    dto.setId(researcher.getId());
+                    dto.setName(researcher.getName());
+                    dto.setEmail(researcher.getEmail());
+                    dto.setResearcheridNumber(researcher.getResearcheridNumber());
+                    dto.setResume(researcher.getResume());
+
+                    Institute institute = InstituteService.getById(researcher.getInstituteID());
+                    dto.setInstituteId(institute.getId());
+                    dto.setInstituteName(institute.getName());
+                    dto.setInstituteAcronym(institute.getAcronym());
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.OK).body(researchersWithInstitutes);
     }
     
     //endregion
