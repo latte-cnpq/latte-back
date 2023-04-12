@@ -89,10 +89,8 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
 
                     Node curriculoVitae = doc.getElementsByTagName("CURRICULO-VITAE").item(0);
                     Element curriculoVitaeElement = (Element) curriculoVitae;
-                    
-                    Node dadosGerais = doc.getElementsByTagName("DADOS-GERAIS").item(0);
-                    Element dadosGeraisElement = (Element) dadosGerais;
-                    String nomeCompleto = dadosGeraisElement.getAttribute("NOME-COMPLETO");
+
+                    String nomeCompleto = getString(doc, "DADOS-GERAIS", "NOME-COMPLETO");
 
                     //Salva pesquisador em cache
                     ResearcherCache researcherCache = new ResearcherCache(nomeCompleto,identificationNumber, file.getName());
@@ -120,29 +118,28 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
             Document doc = dBuilder.parse(file);
             doc.getDocumentElement().normalize();
 
-            Node curriculoVitae = doc.getElementsByTagName("CURRICULO-VITAE").item(0);
-            Element curriculoVitaeElement = (Element) curriculoVitae;
-            String numeroIdentificador = curriculoVitaeElement.getAttribute("NUMERO-IDENTIFICADOR");
-            
-            Node dadosGerais = doc.getElementsByTagName("DADOS-GERAIS").item(0);
-            Element dadosGeraisElement = (Element) dadosGerais;
-            String nomeCompleto = dadosGeraisElement.getAttribute("NOME-COMPLETO");
-            
-            Node resumoCV = doc.getElementsByTagName("RESUMO-CV").item(0);
-            Element resumoCVElement = (Element) resumoCV;
-            String resume = resumoCVElement.getAttribute("TEXTO-RESUMO-CV-RH");
+            String numeroIdentificador = getString(doc, "CURRICULO-VITAE", "NUMERO-IDENTIFICADOR");
+            String nomeCompleto = getString(doc, "DADOS-GERAIS", "NOME-COMPLETO");
+            String resume = getString(doc, "RESUMO-CV", "TEXTO-RESUMO-CV-RH");
 
             //Todo: Ler restante do XML
 
-
             //Salva pesquisador 
              researcher = new Researcher(nomeCompleto, numeroIdentificador, resume);
+
             return researcher;          
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         throw new IllegalArgumentException ("File not found.");
+    }
+
+    private static String getString(Document doc, String tagname, String name) {
+        Node curriculoVitae = doc.getElementsByTagName(tagname).item(0);
+        Element curriculoVitaeElement = (Element) curriculoVitae;
+        String numeroIdentificador = curriculoVitaeElement.getAttribute(name);
+        return numeroIdentificador;
     }
 
     public List<Researcher> getAll(){
