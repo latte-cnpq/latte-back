@@ -1,37 +1,41 @@
 package br.edu.femass.latteback.services;
+
+import br.edu.femass.latteback.dto.ResearcherDto;
+import br.edu.femass.latteback.models.Book;
+import br.edu.femass.latteback.models.Researcher;
+import br.edu.femass.latteback.models.ResearcherCache;
+import br.edu.femass.latteback.repositories.BookRepository;
+import br.edu.femass.latteback.repositories.ResearcherCacheRepository;
+import br.edu.femass.latteback.repositories.ResearcherRepository;
+import br.edu.femass.latteback.services.interfaces.RResearcherService;
+import br.edu.femass.latteback.utils.enums.ResearcherField;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import br.edu.femass.latteback.dto.ResearcherDto;
-import br.edu.femass.latteback.models.Institute;
-import br.edu.femass.latteback.models.Researcher;
-import br.edu.femass.latteback.models.ResearcherCache;
-import br.edu.femass.latteback.repositories.ResearcherCacheRepository;
-import br.edu.femass.latteback.repositories.ResearcherRepository;
-import br.edu.femass.latteback.services.interfaces.RResearcherService;
-import br.edu.femass.latteback.utils.enums.ResearcherField;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import jakarta.transaction.Transactional;
 
 @Service
 public class ResearcherService implements RResearcherService {//Todo:Remover comentários se necessário
     private final ResearcherRepository _researcherRepository;
+    private final BookRepository _bookRepository;
     private final ResearcherCacheRepository _researcherCacheRepository;
     private static final ArrayList<String> filesOnCache = new ArrayList<>();
 
-    public ResearcherService(ResearcherRepository researcherRepository, ResearcherCacheRepository researcherCacheRepository) {
+    public ResearcherService(ResearcherRepository researcherRepository, ResearcherCacheRepository researcherCacheRepository, BookRepository bookRepository) {
 
         this._researcherRepository = researcherRepository;
         this._researcherCacheRepository = researcherCacheRepository;
+        this._bookRepository = bookRepository;
         var researchersOnCache = _researcherCacheRepository.findAll();
         for (ResearcherCache rc : researchersOnCache){
             filesOnCache.add(rc.getFileName());
@@ -88,7 +92,6 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
                     doc.getDocumentElement().normalize();
 
                     Node curriculoVitae = doc.getElementsByTagName("CURRICULO-VITAE").item(0);
-                    Element curriculoVitaeElement = (Element) curriculoVitae;
 
                     String nomeCompleto = getString(doc, "DADOS-GERAIS", "NOME-COMPLETO");
 
@@ -127,7 +130,9 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
             //Salva pesquisador 
              researcher = new Researcher(nomeCompleto, numeroIdentificador, resume);
 
-            return researcher;          
+            getResearcherBooks(researcher, doc);
+
+            return researcher;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,11 +140,36 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
         throw new IllegalArgumentException ("File not found.");
     }
 
+    private void getResearcherBooks(Researcher researcher, Document doc) {
+        NodeList livrosLIsta = doc.getElementsByTagName("LIVRO-PUBLICADO-OU-ORGANIZADO");
+
+        for (int i = 0; i<livrosLIsta.getLength();i++){
+            Element livroPublicadoElement = (Element) livrosLIsta.item(i);
+            Element dadosLivro = (Element) livroPublicadoElement.getElementsByTagName("DADOS-BASICOS-DO-LIVRO").item(0);
+            String tituloLivro = dadosLivro.getAttribute("TITULO-DO-LIVRO");
+            String anoLivro = dadosLivro.getAttribute("ANO");
+
+            Element detalheLivro = (Element) livroPublicadoElement.getElementsByTagName("DETALHAMENTO-DO-LIVRO").item(0);
+            String publisher = detalheLivro.getAttribute("NOME-DA-EDITORA");
+            String volume = detalheLivro.getAttribute("NUMERO-DE-VOLUMES");
+            String paginas = detalheLivro.getAttribute("NUMERO-DE-PAGINAS");
+
+            NodeList autoresLivro = livroPublicadoElement.getElementsByTagName("AUTORES");
+            ArrayList<String> autores = new ArrayList<>();
+            for (int j = 0; j<autoresLivro.getLength();j++){
+                Element autorArtigo = (Element) autoresLivro.item(j);
+                String nomeAutor = autorArtigo.getAttribute("NOME-PARA-CITACAO");
+                autores.add(nomeAutor);
+            }
+            Book book = new Book(tituloLivro, publisher, volume, paginas, anoLivro, autores, researcher);
+            _bookRepository.save(book);
+        }
+    }
+
     private static String getString(Document doc, String tagname, String name) {
         Node curriculoVitae = doc.getElementsByTagName(tagname).item(0);
         Element curriculoVitaeElement = (Element) curriculoVitae;
-        String numeroIdentificador = curriculoVitaeElement.getAttribute(name);
-        return numeroIdentificador;
+        return curriculoVitaeElement.getAttribute(name);
     }
 
     public List<Researcher> getAll(){
@@ -179,7 +209,7 @@ public class ResearcherService implements RResearcherService {//Todo:Remover com
 
         var foundResearcher = _researcherRepository.findById(researcherDto.getId());
 
-        if(!foundResearcher.isPresent()) {
+        if(foundResearcher.isEmpty()) {
             throw new IllegalArgumentException("Pesquisador não encontrado");
         }
 

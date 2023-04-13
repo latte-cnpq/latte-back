@@ -8,7 +8,7 @@ import java.util.*;
 
 @Entity
 @Data
-public class Article {
+public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -17,7 +17,7 @@ public class Article {
     private String title;
 
     @Column(nullable = false)
-    private String publishedOn;
+    private String publisher;
 
     @Column(nullable = false)
     private String volume;
@@ -35,12 +35,12 @@ public class Article {
     @JoinColumn(name = "researcher")
     private Researcher researcher;
 
-    public Article() {
+    public Book() {
     }
 
-    public Article(String title, String publishedOn, String volume, String pages, String year, List<String> authorNames, Researcher researcher) {
+    public Book(String title, String publishedOn, String volume, String pages, String year, List<String> authorNames, Researcher researcher) {
         this.title = title;
-        this.publishedOn = publishedOn;
+        this.publisher = publishedOn;
         this.volume = volume;
         this.pages = pages;
         this.year = year;
@@ -51,4 +51,7 @@ public class Article {
     public String getAuthorNames() {
         return String.join(", ", authorNames);
     }
+
+
+
 }

@@ -3,8 +3,6 @@ package br.edu.femass.latteback.models;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 
@@ -27,8 +25,6 @@ public class Researcher {
     private String resume;
     private UUID instituteID;
 
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Article> articles = new ArrayList<>();
 
     public Researcher() {
     }
