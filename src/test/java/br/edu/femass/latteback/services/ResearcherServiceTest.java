@@ -5,10 +5,8 @@ import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import br.edu.femass.latteback.dto.ResearcherDto;
 import br.edu.femass.latteback.models.Researcher;
 import br.edu.femass.latteback.repositories.ResearcherRepository;
 
@@ -28,7 +25,6 @@ public class ResearcherServiceTest {
 
     @InjectMocks
     private ResearcherService researcherService;
-    private static ResearcherDto researcherDto = new ResearcherDto();
     private static final Researcher researcher = new Researcher();
     private static UUID id;
 
@@ -37,30 +33,6 @@ public class ResearcherServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    
-
-    
-
-    /*@BeforeEach
-    public void setup() {
-        researcherDto = new ResearcherDto();
-        researcherDto.setName("Pesquisador1");
-        researcherDto.setResearcheridNumber("");
-        id = UUID.fromString("00000000-0000-0000-0000-000000000000");
-    }*/
-
-   
-    /* @Test
-    @DisplayName("Save researcher")
-    public void saveTest(){
-        BeanUtils.copyProperties(researcherDto, researcher);
-
-        when(researcherService.save(researcheridNumber)).thenReturn(researcher);
-
-        Researcher savedResearcher = researcherService.save(researcherDto);
-
-        assertEquals(savedResearcher, researcher);
-    }*/
     
     @Test
     @DisplayName("Get all saved researchers")

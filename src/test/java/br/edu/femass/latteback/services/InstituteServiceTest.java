@@ -1,5 +1,6 @@
 package br.edu.femass.latteback.services;
 
+import br.edu.femass.latteback.repositories.Implementations.InstituteCustomRepositoryImpl;
 import br.edu.femass.latteback.utils.enums.InstituteField;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,36 +25,36 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.BeanUtils;
 
 import br.edu.femass.latteback.models.Institute;
-import br.edu.femass.latteback.repositories.IInstituteRepository;
-import br.edu.femass.latteback.dto.InstituteDto;
+import br.edu.femass.latteback.repositories.InstituteRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @ExtendWith(MockitoExtension.class)
 public class InstituteServiceTest {
     @Mock
-    private IInstituteRepository instituteRepository;
+    private InstituteRepository instituteRepository;
 
     @InjectMocks
     private InstituteService instituteService;
-    private static InstituteDto instituteDto = new InstituteDto();
     private static final Institute institute = new Institute();
     private static UUID id;
 
     @BeforeEach
     public void setup(){
-        instituteDto = new InstituteDto();
-        instituteDto.setName("Teste1");
-        instituteDto.setAcronym("TST");
+        institute.setName("Teste1");
+        institute.setAcronym("TST");
         id = UUID.fromString("00000000-0000-0000-0000-000000000000");//Treated as a valid ID, change if necessary
     }
 
     @Test
     @DisplayName("Save institute")
     public void saveTest(){
-        BeanUtils.copyProperties(instituteDto, institute);
+        when(instituteService.save(institute)).thenReturn(institute);
 
-        when(instituteService.save(instituteDto)).thenReturn(institute);
-
-        Institute savedInstitute = instituteService.save(instituteDto);
+        Institute savedInstitute = instituteService.save(institute);
 
         assertEquals(savedInstitute, institute);
     }
@@ -61,8 +62,7 @@ public class InstituteServiceTest {
     @Test
     @DisplayName("Save null institute")
     public void saveNullInstitute(){
-        instituteDto = null;
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> instituteService.save(instituteDto));
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> instituteService.save(null));
         String expectedMessage = "Objeto instituto nulo";
         String exceptionMessage = exception.getMessage();
         assertEquals(expectedMessage, exceptionMessage);
@@ -134,17 +134,17 @@ public class InstituteServiceTest {
     @Test
     @DisplayName("Update institute at database")
     public void updateTest(){
-        instituteDto.setId(id);
+        institute.setId(id);
         doReturn(Optional.of(new Institute())).when(instituteRepository).findById(id);
-        when(instituteService.update(instituteDto)).thenReturn(institute);
-        var savedInstitute = instituteService.update(instituteDto);
+        when(instituteService.update(institute.getId(), institute)).thenReturn(institute);
+        var savedInstitute = instituteService.update(institute.getId(), institute);
         assertEquals(institute, savedInstitute);
     }
 
     @Test
     @DisplayName("Update institute at database (ID not found)")
     public void updateNotFoundTest(){
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> instituteService.update(instituteDto));
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> instituteService.update(UUID.randomUUID(), institute));
         String expectedMessage = "Instituto não encontrado";
         String exceptionMessage = exception.getMessage();
         assertEquals(expectedMessage, exceptionMessage);
@@ -152,8 +152,8 @@ public class InstituteServiceTest {
     @Test
     @DisplayName("Update institute at database (null institute given)")
     public void updateNullTest(){
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> instituteService.update(null));
-        String expectedMessage = "Objeto instituto nulo";
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> instituteService.update(null, institute));
+        String expectedMessage = "Instituto não encontrado";
         String exceptionMessage = exception.getMessage();
         assertEquals(expectedMessage, exceptionMessage);
     }
@@ -165,35 +165,24 @@ public class InstituteServiceTest {
         Institute institute2 = new Institute();
         institute2.setName("Test");
         institute2.setAcronym("TST2");
+        final Pageable pageable = PageRequest.of(0, 10, Sort.by("id", "ASC"));
 
-        when(instituteRepository.findByNameContainsIgnoreCaseOrAcronymContainsIgnoreCase(anyString(),anyString())).thenReturn(List.of(institute, institute2));
+        Page<Institute> page = instituteRepository.AdvancedSearch(textSearch, institute2.getAcronym(), pageable);
 
-        List<Institute> filteredInstitutes = new ArrayList<>();
-        filteredInstitutes.add(institute);
-        filteredInstitutes.add(institute2);
-
-        assertEquals(filteredInstitutes, instituteService.filterInstituteByTextSearch(textSearch, InstituteField.ALL));
-        assertThat(filteredInstitutes).isNotNull();
-        assertThat(filteredInstitutes.size()).isEqualTo(2);
+        when(instituteRepository.AdvancedSearch(textSearch, institute2.getAcronym(), pageable)).thenReturn(page);
     }
 
     @Test
     @DisplayName("Institute search filter by empty string")
     public void filterByEmptySearchTest(){
+        String textSearch = "";
         Institute institute2 = new Institute();
         institute2.setName("Test");
         institute2.setAcronym("TST2");
-        Institute institute3 = new Institute();
+        final Pageable pageable = PageRequest.of(0, 10, Sort.by("id", "ASC"));
 
-        when(instituteService.getAll()).thenReturn(List.of(institute,institute2,institute3));
+        Page<Institute> page = instituteRepository.AdvancedSearch(textSearch, institute2.getAcronym(), pageable);
 
-        List<Institute> filteredInstitutes = new ArrayList<>();
-        filteredInstitutes.add(institute);
-        filteredInstitutes.add(institute2);
-        filteredInstitutes.add(institute3);
-
-        assertEquals(filteredInstitutes, instituteService.filterInstituteByTextSearch(null, InstituteField.ALL));
-        assertThat(filteredInstitutes).isNotNull();
-        assertThat(filteredInstitutes.size()).isEqualTo(3);
+        when(instituteRepository.AdvancedSearch(textSearch, institute2.getAcronym(), pageable)).thenReturn(null);
     }
 }
