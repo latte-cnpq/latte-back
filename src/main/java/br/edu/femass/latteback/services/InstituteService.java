@@ -70,15 +70,15 @@ public class InstituteService implements InstituteServiceInterface {
     }
 
     @Override
-    public Institute update(UUID id, Institute instituteDto) {
-        if (instituteDto == null) throw new IllegalArgumentException("Objeto instituto nulo");
+    public Institute update(UUID id, Institute institute) {
+        if (institute == null) throw new IllegalArgumentException("Objeto instituto nulo");
 
-        var foundInstitute = instituteRepository.findById(instituteDto.getId());
+        var foundInstitute = instituteRepository.findById(id);
 
         if (foundInstitute.isEmpty()) throw new NotFoundException("Instituto não encontrado");
 
-        foundInstitute.get().setName(instituteDto.getName());
-        foundInstitute.get().setAcronym(instituteDto.getAcronym());
+        foundInstitute.get().setName(institute.getName());
+        foundInstitute.get().setAcronym(institute.getAcronym());
 
         return instituteRepository.save(foundInstitute.get());
     }

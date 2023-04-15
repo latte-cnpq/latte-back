@@ -136,7 +136,7 @@ public class InstituteController {
             var result = instituteService.update(id, institute);
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 

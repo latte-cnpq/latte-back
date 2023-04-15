@@ -36,12 +36,12 @@ public class ResearcherCustomRepositoryImpl implements ResearcherCustomRepositor
         List<Predicate> predicates = new ArrayList<>();
 
         if (name != null && !name.isEmpty()) {
-            predicates.add(cb.equal(researcherRoot.get("name"), name));
+            predicates.add(cb.like(researcherRoot.get("name"), "%" + name + "%"));
         }
 
         if (institueAcronym != null && !institueAcronym.isEmpty()) {
             Join<Researcher, Institute> join = researcherRoot.join("institute");
-            predicates.add(cb.equal(join.get("acronym"), institueAcronym));
+            predicates.add(cb.like(join.get("acronym"), "%" + institueAcronym + "%"));
         }
 
         if (!predicates.isEmpty()) {
