@@ -107,7 +107,7 @@ public class ResearcherController {
             ),
     })
     @Parameters({
-            @Parameter(name = "name", description = "Name of the institute", in = ParameterIn.QUERY),
+            @Parameter(name = "name", description = "Name of the researcher", in = ParameterIn.QUERY),
             @Parameter(name = "institute_acronym", description = "Acronym of the institute", in = ParameterIn.QUERY),
             @Parameter(name = "page", description = "Page number", in = ParameterIn.QUERY, example = "0"),
             @Parameter(name = "perPage", description = "Number of items per page", in = ParameterIn.QUERY, example = "10"),

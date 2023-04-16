@@ -132,35 +132,36 @@ public class ResearcherService implements ResearcherServiceInterface {
         throw new IllegalArgumentException("File not found.");
     }
 
-    private Researcher getResearcherArticles(Researcher researcher, Document doc) {
+    private void getResearcherArticles(Researcher researcher, Document doc) {
         NodeList publishedArticles = doc.getElementsByTagName("ARTIGOS-PUBLICADOS");
         Element publishedArticlesElement = (Element) publishedArticles.item(0);
-        NodeList articlesList = publishedArticlesElement.getElementsByTagName("ARTIGO-PUBLICADO");
+        if (publishedArticlesElement != null) {
+            NodeList articlesList = publishedArticlesElement.getElementsByTagName("ARTIGO-PUBLICADO");
 
-        for (int i = 0; i < articlesList.getLength(); i++) {
-            Element artigoPublicadoElement = (Element) articlesList.item(i);
-            Element articleData = (Element) artigoPublicadoElement.getElementsByTagName("DADOS-BASICOS-DO-ARTIGO").item(0);
-            String articleTitle = articleData.getAttribute("TITULO-DO-ARTIGO");
-            String articleYear = articleData.getAttribute("ANO-DO-ARTIGO");
+            for (int i = 0; i < articlesList.getLength(); i++) {
+                Element artigoPublicadoElement = (Element) articlesList.item(i);
+                Element articleData = (Element) artigoPublicadoElement.getElementsByTagName("DADOS-BASICOS-DO-ARTIGO").item(0);
+                String articleTitle = articleData.getAttribute("TITULO-DO-ARTIGO");
+                String articleYear = articleData.getAttribute("ANO-DO-ARTIGO");
 
-            Element articleElement = (Element) articlesList.item(i);
-            Element detalheArtigo = (Element) articleElement.getElementsByTagName("DETALHAMENTO-DO-ARTIGO").item(0);
-            String publisher = detalheArtigo.getAttribute("TITULO-DO-PERIODICO-OU-REVISTA");
-            String volume = detalheArtigo.getAttribute("VOLUME");
-            String paginas = detalheArtigo.getAttribute("PAGINA-INICIAL") + " - " + detalheArtigo.getAttribute("PAGINA-FINAL");
+                Element articleElement = (Element) articlesList.item(i);
+                Element detalheArtigo = (Element) articleElement.getElementsByTagName("DETALHAMENTO-DO-ARTIGO").item(0);
+                String publisher = detalheArtigo.getAttribute("TITULO-DO-PERIODICO-OU-REVISTA");
+                String volume = detalheArtigo.getAttribute("VOLUME");
+                String paginas = detalheArtigo.getAttribute("PAGINA-INICIAL") + " - " + detalheArtigo.getAttribute("PAGINA-FINAL");
 
-            NodeList autoresArtigo = artigoPublicadoElement.getElementsByTagName("AUTORES");
-            ArrayList<String> autores = new ArrayList<>();
-            for (int j = 0; j < autoresArtigo.getLength(); j++) {
-                Element autorArtigo = (Element) autoresArtigo.item(j);
-                String nomeAutor = autorArtigo.getAttribute("NOME-PARA-CITACAO");
-                autores.add(nomeAutor);
+                NodeList autoresArtigo = artigoPublicadoElement.getElementsByTagName("AUTORES");
+                ArrayList<String> autores = new ArrayList<>();
+                for (int j = 0; j < autoresArtigo.getLength(); j++) {
+                    Element autorArtigo = (Element) autoresArtigo.item(j);
+                    String nomeAutor = autorArtigo.getAttribute("NOME-PARA-CITACAO");
+                    autores.add(nomeAutor);
+                }
+
+                Article article = new Article(articleTitle, publisher, volume, paginas, articleYear, autores, researcher);
+                articleRepositoy.save(article);
             }
-
-            Article article = new Article(articleTitle, publisher, volume, paginas, articleYear, autores, researcher);
-            articleRepositoy.save(article);
         }
-        return researcher;
     }
 
     private void getResearcherBooks(Researcher researcher, Document doc) {
