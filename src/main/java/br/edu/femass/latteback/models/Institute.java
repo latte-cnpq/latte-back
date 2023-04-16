@@ -1,5 +1,6 @@
 package br.edu.femass.latteback.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,9 +13,12 @@ public class Institute implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private UUID id;
+
     @Column(nullable = false, length = 200)
     private String name;
+
     @Column(nullable = false, length = 5)
     private String acronym;
 }
