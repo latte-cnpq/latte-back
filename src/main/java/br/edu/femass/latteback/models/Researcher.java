@@ -1,10 +1,7 @@
 package br.edu.femass.latteback.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.util.UUID;
 
 
@@ -13,8 +10,6 @@ import java.util.UUID;
 public class Researcher {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    @JsonIgnore
     private UUID id;
     @Column(nullable = false, length = 100)
     private String name;
@@ -22,15 +17,12 @@ public class Researcher {
     @Column(length = 200)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private String researcheridNumber;
-
+    
     @Column(length = 2000)
     private String resume;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "institute_id")
-    private Institute institute;
+    private UUID instituteID;
 
     public Researcher() {
     }
