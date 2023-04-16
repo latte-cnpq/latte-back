@@ -1,31 +1,31 @@
 package br.edu.femass.latteback.services;
 
+import br.edu.femass.latteback.dto.InstituteDto;
 import br.edu.femass.latteback.models.Institute;
-import br.edu.femass.latteback.repositories.InstituteRepository;
-import br.edu.femass.latteback.services.interfaces.InstituteServiceInterface;
+import br.edu.femass.latteback.repositories.IInstituteRepository;
+import br.edu.femass.latteback.services.interfaces.IInstituteService;
+import br.edu.femass.latteback.utils.enums.InstituteField;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
-public class InstituteService implements InstituteServiceInterface {
+public class InstituteService implements IInstituteService {
 
-    private final InstituteRepository instituteRepository;
+    private final IInstituteRepository _instituteRepository;
 
-    public InstituteService(InstituteRepository instituteRepository) {
-        this.instituteRepository = instituteRepository;
+    public InstituteService(IInstituteRepository instituteRepository) {
+
+        this._instituteRepository = instituteRepository;
     }
 
     @Override
     @Transactional
-    public Institute save(Institute instituteDto) {
-        if (instituteDto == null) {
+    public Institute save(InstituteDto instituteDto) {
+        if(instituteDto == null) {
             throw new IllegalArgumentException("Objeto instituto nulo");
         }
 
@@ -34,57 +34,70 @@ public class InstituteService implements InstituteServiceInterface {
         institute.setAcronym(instituteDto.getAcronym());
         BeanUtils.copyProperties(instituteDto, institute);
 
-        return instituteRepository.save(institute);
+        return _instituteRepository.save(institute);
     }
 
     @Override
     public List<Institute> getAll() {
-        return instituteRepository.findAll();
+        return _instituteRepository.findAll();
     }
 
     @Override
     public Institute getById(UUID id) {
-        if (id == null) {
+        if(id == null){
             throw new IllegalArgumentException("ID procurado não pode ser nulo.");
         }
 
-        var institute = instituteRepository.findById(id);
+        var institute = _instituteRepository.findById(id);
 
-        if (!institute.isPresent()) {
+        if(!institute.isPresent()) {
             throw new IllegalArgumentException("Não há instituto cadastrado com esse id");
         }
 
-        return institute.get();
+        return  institute.get();
     }
 
     @Override
     public void delete(UUID id) {
 
-        var existInstitute = instituteRepository.existsById(id);
+        var existInstitute = _instituteRepository.existsById(id);
 
-        if (!existInstitute) {
+        if(!existInstitute) {
             throw new IllegalArgumentException("Não há instituto cadastrado com esse id");
         }
 
-        instituteRepository.deleteById(id);
+        _instituteRepository.deleteById(id);
     }
 
     @Override
-    public Institute update(UUID id, Institute institute) {
-        if (institute == null) throw new IllegalArgumentException("Objeto instituto nulo");
+    public Institute update(InstituteDto instituteDto) {
+        if(instituteDto == null) {
+            throw new IllegalArgumentException("Objeto instituto nulo");
 
-        var foundInstitute = instituteRepository.findById(id);
+        }
 
-        if (foundInstitute.isEmpty()) throw new NotFoundException("Instituto não encontrado");
+        var foundInstitute = _instituteRepository.findById(instituteDto.getId());
 
-        foundInstitute.get().setName(institute.getName());
-        foundInstitute.get().setAcronym(institute.getAcronym());
+        if(!foundInstitute.isPresent()) {
+            throw new IllegalArgumentException("Instituto não encontrado");
+        }
 
-        return instituteRepository.save(foundInstitute.get());
+        foundInstitute.get().setName(instituteDto.getName());
+        foundInstitute.get().setAcronym(instituteDto.getAcronym());
+
+        return _instituteRepository.save(foundInstitute.get());
     }
 
-    public Page<Institute> AdvancedSearch(String name, String acronym, Pageable pageable) {
-        return instituteRepository.AdvancedSearch(name, acronym, pageable);
-    }
+    @Override
+    public List<Institute> filterInstituteByTextSearch(String textSearch, InstituteField field) {
+        if(textSearch == null || textSearch.isBlank() || textSearch.isEmpty()) {
+           return getAll();
+        }
 
+        return switch (field) {
+            case NAME -> _instituteRepository.findByNameContainsIgnoreCase(textSearch);
+            case  ACRONYM-> _instituteRepository.findByAcronymContainsIgnoreCase(textSearch);
+            default -> _instituteRepository.findByNameContainsIgnoreCaseOrAcronymContainsIgnoreCase(textSearch, textSearch);
+        };
+    }
 }

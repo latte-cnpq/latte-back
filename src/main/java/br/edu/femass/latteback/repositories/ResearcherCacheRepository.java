@@ -9,6 +9,6 @@ import java.util.UUID;
 
 public interface ResearcherCacheRepository extends JpaRepository<ResearcherCache, UUID> {
     List<ResearcherCache> findByNameContainsIgnoreCase(String name);
+    Optional<ResearcherCache> findFirstByResearcheridNumber(String ResearcherCacheidNumber);
 
-    Optional<ResearcherCache> findFirstByResearcherIdNumber(String ResearcherCacheidNumber);
 }

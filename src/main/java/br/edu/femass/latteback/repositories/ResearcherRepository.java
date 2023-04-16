@@ -7,11 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ResearcherRepository extends JpaRepository<Researcher, UUID>, ResearcherCustomRepository {
+public interface ResearcherRepository extends JpaRepository<Researcher, UUID> {
     List<Researcher> findByNameContainsIgnoreCase(String name);
-
     Optional<Researcher> findFirstByResearcheridNumberContainsIgnoreCase(String researcheridNumber);
 
-    //List<Researcher> findByNameStartsWith(String name);
-    List<Researcher> findByNameContainsIgnoreCaseOrResearcheridNumber(String name, String researcheridNumber);
 }
