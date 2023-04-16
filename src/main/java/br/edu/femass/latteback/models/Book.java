@@ -4,6 +4,8 @@ package br.edu.femass.latteback.models;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +29,13 @@ public class Book {
     private String pages;
     @Column(nullable = false, length = 4)
     private String year;
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ElementCollection
+    @JoinColumn(name = "book_author_names", foreignKey = @ForeignKey(name = "book_author_names_fk"))
     private List<String> authorNames = new ArrayList<>();
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "researcher")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "researcher", foreignKey = @ForeignKey(name = "research_fk"))
     private Researcher researcher;
 
     public Book() {
