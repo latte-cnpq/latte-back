@@ -25,7 +25,7 @@ public class Researcher {
     @Column(nullable = false)
     private String researcheridNumber;
 
-    @Column(length = 2000)
+    @Column(length = 5000)
     private String resume;
 
     @ManyToOne(fetch = FetchType.EAGER)

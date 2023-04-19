@@ -31,6 +31,7 @@ public class Book {
     private String year;
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ElementCollection
+    @Column (length = 400)
     @JoinColumn(name = "book_author_names", foreignKey = @ForeignKey(name = "book_author_names_fk"))
     private List<String> authorNames = new ArrayList<>();
     @OnDelete(action = OnDeleteAction.CASCADE)

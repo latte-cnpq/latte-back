@@ -19,6 +19,6 @@ public class Institute implements Serializable {
     @Column(nullable = false, length = 200)
     private String name;
 
-    @Column(nullable = false, length = 5)
+    @Column(nullable = false, length = 6)
     private String acronym;
 }

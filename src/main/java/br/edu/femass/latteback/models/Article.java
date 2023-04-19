@@ -19,7 +19,7 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private UUID id;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 400)
     private String title;
     @Column(nullable = false)
     private String publishedOn;
@@ -32,6 +32,7 @@ public class Article {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ElementCollection
     @JoinColumn(name = "article_author_names", foreignKey = @ForeignKey(name = "article_author_names_fk"))
+    @Column (length = 400)
     private List<String> authorNames = new ArrayList<>();
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)

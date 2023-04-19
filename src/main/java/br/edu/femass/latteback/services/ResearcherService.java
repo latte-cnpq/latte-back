@@ -131,7 +131,25 @@ public class ResearcherService implements ResearcherServiceInterface {
 
         throw new IllegalArgumentException("File not found.");
     }
+    public void saveAll(UUID instituteId) {
+        try {
+            File folder = new File(RESUME_PATH);
+            File[] files = folder.listFiles();
 
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+
+            assert files != null;
+            for (File file : files) {
+                System.out.println(file.getName());
+                if (file.isFile() && file.getName().contains(".xml"))
+                getResearcherFromFile(file.getName(), instituteId);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private void getResearcherArticles(Researcher researcher, Document doc) {
         NodeList publishedArticles = doc.getElementsByTagName("ARTIGOS-PUBLICADOS");
         Element publishedArticlesElement = (Element) publishedArticles.item(0);
