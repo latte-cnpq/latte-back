@@ -16,5 +16,8 @@ public interface ProductionServiceInterface {
 
    //Production update(UUID id, Production production);
 
-   Page<Production> AdvancedSearch(String productionType, String productionDetails, Pageable pageable);
+  /*Page<Production> AdvancedSearch(String name, String productionType, String productionDetails,
+   org.springdoc.core.converters.models.Pageable pageable);*/
+
+   Page<Production> AdvancedSearch(String name, String productionType, String productionDetails, Pageable pageable);
 }

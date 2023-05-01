@@ -38,7 +38,8 @@ public class ProductionService implements ProductionServiceInterface {
         return productionRepository.findAll();
     }
 
-    public Page<Production> AdvancedSearch(String productionType, String productionDetails, Pageable pageable){
+    public Page<Production> AdvancedSearch(String name, String productionType, String productionDetails,
+            Pageable pageable) {
         return productionRepository.AdvancedSearch(productionType, productionDetails, pageable);
     }
 }
