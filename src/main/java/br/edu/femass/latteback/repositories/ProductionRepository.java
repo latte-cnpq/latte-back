@@ -1,6 +1,5 @@
 package br.edu.femass.latteback.repositories;
 import br.edu.femass.latteback.models.Production;
-import org.springdoc.core.converters.models.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;

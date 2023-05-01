@@ -6,14 +6,10 @@ import br.edu.femass.latteback.repositories.ProductionRepository;
 import br.edu.femass.latteback.repositories.ResearcherCacheRepository;
 import br.edu.femass.latteback.repositories.ResearcherRepository;
 import br.edu.femass.latteback.services.interfaces.ProductionServiceInterface;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ProductionService implements ProductionServiceInterface {
