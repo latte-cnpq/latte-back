@@ -1,5 +1,4 @@
 package br.edu.femass.latteback.services;
-
 import br.edu.femass.latteback.models.*;
 import br.edu.femass.latteback.repositories.ArticleRepository;
 import br.edu.femass.latteback.repositories.BookRepository;
@@ -14,7 +13,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
@@ -30,14 +28,14 @@ public class ResearcherService implements ResearcherServiceInterface {
     private final ResearcherRepository researcherRepository;
     private final InstituteService instituteService;
     private final ResearcherCacheRepository researcherCacheRepository;
-    private final ArticleRepository articleRepositoy;
+    private final ArticleRepository articleRepository;
     private final BookRepository bookRepository;
 
-    public ResearcherService(ResearcherRepository researcherRepository, InstituteService instituteService, ResearcherCacheRepository researcherCacheRepository, ArticleRepository articleRepositoy, BookRepository bookRepository) {
+    public ResearcherService(ResearcherRepository researcherRepository, InstituteService instituteService, ResearcherCacheRepository researcherCacheRepository, ArticleRepository articleRepository, BookRepository bookRepository) {
         this.researcherRepository = researcherRepository;
         this.instituteService = instituteService;
         this.researcherCacheRepository = researcherCacheRepository;
-        this.articleRepositoy = articleRepositoy;
+        this.articleRepository = articleRepository;
         this.bookRepository = bookRepository;
     }
 
@@ -131,7 +129,25 @@ public class ResearcherService implements ResearcherServiceInterface {
 
         throw new IllegalArgumentException("File not found.");
     }
+    public void saveAll(UUID instituteId) {
+        try {
+            File folder = new File(RESUME_PATH);
+            File[] files = folder.listFiles();
 
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+
+            assert files != null;
+            for (File file : files) {
+                System.out.println(file.getName());
+                if (file.isFile() && file.getName().contains(".xml"))
+                getResearcherFromFile(file.getName(), instituteId);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private void getResearcherArticles(Researcher researcher, Document doc) {
         NodeList publishedArticles = doc.getElementsByTagName("ARTIGOS-PUBLICADOS");
         Element publishedArticlesElement = (Element) publishedArticles.item(0);
@@ -159,7 +175,7 @@ public class ResearcherService implements ResearcherServiceInterface {
                 }
 
                 Article article = new Article(articleTitle, publisher, volume, paginas, articleYear, autores, researcher);
-                articleRepositoy.save(article);
+                articleRepository.save(article);
             }
         }
     }

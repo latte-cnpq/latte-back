@@ -1,19 +1,18 @@
 package br.edu.femass.latteback.services.interfaces;
+import br.edu.femass.latteback.dto.CollectionProduction;
+import br.edu.femass.latteback.dto.ProductionInterface;
+import br.edu.femass.latteback.models.Book;
+import br.edu.femass.latteback.utils.enums.ProductionType;
+import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 import java.util.List;
-import br.edu.femass.latteback.models.Production;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.UUID;
 
 public interface ProductionServiceInterface {
-   List<Production> getAll();
-   
-   //Production save();
-   //Production getById(UUID id);
-   //void delete(UUID id);
-   //Production update(UUID id, Production production);
+    CollectionProduction getAll();
+    CollectionProduction getAllByResearcher(UUID researcherId);
 
-   /*Page<Production> AdvancedSearch(String name, String productionType, String productionDetails,
-   org.springdoc.core.converters.models.Pageable pageable);*/
+    ProductionInterface getById(UUID productionId, ProductionType type);
 
-   Page<Production> AdvancedSearch(String name, String productionType, String productionDetails, Pageable pageable);
+    CollectionProduction AdvanceSearcher(String title, UUID researcherId, UUID instituteId, LocalDate startDate, LocalDate endDate, ProductionType type);
 }

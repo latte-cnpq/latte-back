@@ -1,41 +1,58 @@
 package br.edu.femass.latteback.services;
-import br.edu.femass.latteback.models.Production;
+import br.edu.femass.latteback.dto.CollectionProduction;
+import br.edu.femass.latteback.dto.ProductionInterface;
+import br.edu.femass.latteback.models.Article;
+import br.edu.femass.latteback.models.Book;
+import br.edu.femass.latteback.repositories.ArticleRepositoy;
 import br.edu.femass.latteback.repositories.BookRepository;
-import br.edu.femass.latteback.repositories.ArticleRepository;
-import br.edu.femass.latteback.repositories.ProductionRepository;
-import br.edu.femass.latteback.repositories.ResearcherCacheRepository;
-import br.edu.femass.latteback.repositories.ResearcherRepository;
 import br.edu.femass.latteback.services.interfaces.ProductionServiceInterface;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import br.edu.femass.latteback.utils.enums.ProductionType;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProductionService implements ProductionServiceInterface {
 
-    private final ProductionRepository productionRepository;
-    private final ResearcherRepository researcherRepository;
-    private final InstituteService instituteService;
-    private final ResearcherCacheRepository researcherCacheRepository;
-    private final ArticleRepository articleRepositoy;
     private final BookRepository bookRepository;
+    private final ArticleRepositoy articleRepositoy;
 
-    public ProductionService(ProductionRepository productionRepository, ResearcherRepository researcherRepository, InstituteService instituteService, ResearcherCacheRepository researcherCacheRepository, ArticleRepository articleRepositoy, BookRepository bookRepository) {
-        this.productionRepository = productionRepository;
-        this.researcherRepository = researcherRepository;
-        this.instituteService = instituteService;
-        this.researcherCacheRepository = researcherCacheRepository;
-        this.articleRepositoy = articleRepositoy;
+
+    public ProductionService(BookRepository bookRepository, ArticleRepositoy articleRepositoy) {
         this.bookRepository = bookRepository;
+        this.articleRepositoy = articleRepositoy;
     }
 
-    public List<Production> getAll() {
-        return productionRepository.findAll();
+    @Override
+    public CollectionProduction getAll() {
+        List<Book> books = bookRepository.findAll();
+        List<Article> articles = articleRepositoy.findAll();
+
+        CollectionProduction productions = new CollectionProduction(books, articles);
+
+        return productions;
     }
 
-    public Page<Production> AdvancedSearch(String name, String productionType, String productionDetails,
-            Pageable pageable) {
-        return productionRepository.AdvancedSearch(productionType, productionDetails, pageable);
+    @Override
+    public CollectionProduction getAllByResearcher(UUID researcherId) {
+        List<Book> books = bookRepository.findByResearcher(researcherId);
+        List<Article> articles = articleRepositoy.findByResearcher(researcherId);
+
+        CollectionProduction productions = new CollectionProduction(books, articles);
+
+        return productions;
+    }
+
+    @Override
+    public ProductionInterface getById(UUID productionId, ProductionType type) {
+
+        return null;
+    }
+
+
+    @Override
+    public CollectionProduction AdvanceSearcher(String title, UUID researcherId, UUID instituteId, LocalDate startDate, LocalDate endDate, ProductionType type) {
+        return null;
     }
 }

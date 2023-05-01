@@ -1,19 +1,17 @@
 package br.edu.femass.latteback.models;
-
-
+import br.edu.femass.latteback.dto.ProductionInterface;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Data
-public class Book {
+public class Book implements ProductionInterface {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,6 +29,7 @@ public class Book {
     private String year;
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ElementCollection
+    @Column (length = 400)
     @JoinColumn(name = "book_author_names", foreignKey = @ForeignKey(name = "book_author_names_fk"))
     private List<String> authorNames = new ArrayList<>();
     @OnDelete(action = OnDeleteAction.CASCADE)

@@ -83,6 +83,10 @@ public class ResearcherController {
     })
     @Operation(summary = "Searches for a researcher file on cache")
     public ResponseEntity<Object> searchResearcher(@PathVariable(value = "id") String researcherIdNumber) {
+        if (researcherIdNumber.equalsIgnoreCase("all")){
+        return ResponseEntity.status(HttpStatus.OK).body("Salvando todos os pesquisadores");
+     }
+
         try {
             var researcherCache = ResearcherCacheService.findFirstByResearcherIdNumber(researcherIdNumber);
 
@@ -138,6 +142,10 @@ public class ResearcherController {
     @PostMapping("")
     @Operation(summary = "Create a new researcher")
     public ResponseEntity<Object> createResearcher(@RequestBody ResearcherFormDTO formData) {
+        if (formData.getResearcherIdNumber() == null ){
+            researcherService.saveAll(formData.getInstituteId());
+            return ResponseEntity.status(HttpStatus.CREATED).body("Todos os pesquisadores foram salvos.");
+        }
         try {
             var result = researcherService.save(formData.getResearcherIdNumber(), formData.getInstituteId());
             return ResponseEntity.status(HttpStatus.CREATED).body(result);

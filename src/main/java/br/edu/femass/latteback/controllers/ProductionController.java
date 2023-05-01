@@ -1,30 +1,20 @@
 package br.edu.femass.latteback.controllers;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import br.edu.femass.latteback.models.Production;
+import br.edu.femass.latteback.dto.CollectionProduction;
+import br.edu.femass.latteback.models.Institute;
 import br.edu.femass.latteback.services.ProductionService;
-//import br.edu.femass.latteback.services.InstituteService;
-//import br.edu.femass.latteback.repositories.ProductionRepository;
-//import br.edu.femass.latteback.services.ResearcherService;
-//import br.edu.femass.latteback.models.Institute;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.webjars.NotFoundException;
 import java.util.List;
 
 @RestController
@@ -32,7 +22,7 @@ import java.util.List;
 @RequestMapping("/production")
 @Tag(name = "Production", description = "This API provides endpoints for managing information about productions")
 @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successful operation", content = {@Content(schema = @Schema(implementation = Production.class))}),
+        @ApiResponse(responseCode = "200", description = "Successful operation", content = {@Content(schema = @Schema(implementation = CollectionProduction.class))}),
         @ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
@@ -53,17 +43,18 @@ public class ProductionController {
 
    @GetMapping("")
    @Operation(summary = "Find all productions")
-   public ResponseEntity<Object> getAllProduction() {
-       try {
-           List<Production> productions = productionService.getAll();
-           System.out.println(productions);
-           return ResponseEntity.status(HttpStatus.OK).body(productions);
-       } catch (Exception e) {
-           return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-       }
-   }
+   public ResponseEntity<Object> getAll() {
+    try {
+        CollectionProduction productions = productionService.getAll();
+        return ResponseEntity.status(HttpStatus.OK).body(productions);
+    } catch (NotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    } catch (RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+}
 
-   @GetMapping("/advancedsearch")
+   /*@GetMapping("/advancedsearch")
     @Operation(summary = "Find all productions using query search and pagination")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation",
@@ -95,5 +86,5 @@ public class ProductionController {
             } catch (RuntimeException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
             }
-        }
+        }*/
 }
