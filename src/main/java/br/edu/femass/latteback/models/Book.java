@@ -1,6 +1,7 @@
 package br.edu.femass.latteback.models;
 
 
+import br.edu.femass.latteback.dto.ProductionInterface;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -13,7 +14,7 @@ import java.util.UUID;
 
 @Entity
 @Data
-public class Book {
+public class Book implements ProductionInterface {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
