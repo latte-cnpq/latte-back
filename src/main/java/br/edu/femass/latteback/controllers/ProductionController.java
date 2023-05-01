@@ -1,7 +1,9 @@
 package br.edu.femass.latteback.controllers;
 import br.edu.femass.latteback.dto.CollectionProduction;
 import br.edu.femass.latteback.models.Institute;
+import br.edu.femass.latteback.services.InstituteService;
 import br.edu.femass.latteback.services.ProductionService;
+import br.edu.femass.latteback.services.ResearcherService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
-import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -31,13 +32,13 @@ import java.util.List;
 public class ProductionController {
     
     private final ProductionService productionService;
-    //private final ResearcherService researcherService;
-    //private final InstituteService instituteService;
+    private final ResearcherService researcherService;
+    private final InstituteService instituteService;
     
-    public ProductionController(ProductionService productionService/*, ResearcherService researcherService, InstituteService instituteService*/) {
+    public ProductionController(ProductionService productionService, ResearcherService researcherService, InstituteService instituteService) {
         this.productionService = productionService;
-        /*this.instituteService = instituteService;
-        this.researcherService = researcherService;*/
+        this.instituteService = instituteService;
+        this.researcherService = researcherService;
 
     }
 

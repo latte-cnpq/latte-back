@@ -3,7 +3,7 @@ import br.edu.femass.latteback.dto.CollectionProduction;
 import br.edu.femass.latteback.dto.ProductionInterface;
 import br.edu.femass.latteback.models.Article;
 import br.edu.femass.latteback.models.Book;
-import br.edu.femass.latteback.repositories.ArticleRepositoy;
+import br.edu.femass.latteback.repositories.ArticleRepository;
 import br.edu.femass.latteback.repositories.BookRepository;
 import br.edu.femass.latteback.services.interfaces.ProductionServiceInterface;
 import br.edu.femass.latteback.utils.enums.ProductionType;
@@ -16,18 +16,18 @@ import java.util.UUID;
 public class ProductionService implements ProductionServiceInterface {
 
     private final BookRepository bookRepository;
-    private final ArticleRepositoy articleRepositoy;
+    private final ArticleRepository articleRepository;
 
 
-    public ProductionService(BookRepository bookRepository, ArticleRepositoy articleRepositoy) {
+    public ProductionService(BookRepository bookRepository, ArticleRepository articleRepository) {
         this.bookRepository = bookRepository;
-        this.articleRepositoy = articleRepositoy;
+        this.articleRepository = articleRepository;
     }
 
     @Override
     public CollectionProduction getAll() {
         List<Book> books = bookRepository.findAll();
-        List<Article> articles = articleRepositoy.findAll();
+        List<Article> articles = articleRepository.findAll();
 
         CollectionProduction productions = new CollectionProduction(books, articles);
 
@@ -37,7 +37,7 @@ public class ProductionService implements ProductionServiceInterface {
     @Override
     public CollectionProduction getAllByResearcher(UUID researcherId) {
         List<Book> books = bookRepository.findByResearcher(researcherId);
-        List<Article> articles = articleRepositoy.findByResearcher(researcherId);
+        List<Article> articles = articleRepository.findByResearcher(researcherId);
 
         CollectionProduction productions = new CollectionProduction(books, articles);
 
