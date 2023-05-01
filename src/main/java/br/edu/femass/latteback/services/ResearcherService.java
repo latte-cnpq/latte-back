@@ -1,7 +1,7 @@
 package br.edu.femass.latteback.services;
 
 import br.edu.femass.latteback.models.*;
-import br.edu.femass.latteback.repositories.ArticleRepositoy;
+import br.edu.femass.latteback.repositories.ArticleRepository;
 import br.edu.femass.latteback.repositories.BookRepository;
 import br.edu.femass.latteback.repositories.ResearcherCacheRepository;
 import br.edu.femass.latteback.repositories.ResearcherRepository;
@@ -30,10 +30,10 @@ public class ResearcherService implements ResearcherServiceInterface {
     private final ResearcherRepository researcherRepository;
     private final InstituteService instituteService;
     private final ResearcherCacheRepository researcherCacheRepository;
-    private final ArticleRepositoy articleRepositoy;
+    private final ArticleRepository articleRepositoy;
     private final BookRepository bookRepository;
 
-    public ResearcherService(ResearcherRepository researcherRepository, InstituteService instituteService, ResearcherCacheRepository researcherCacheRepository, ArticleRepositoy articleRepositoy, BookRepository bookRepository) {
+    public ResearcherService(ResearcherRepository researcherRepository, InstituteService instituteService, ResearcherCacheRepository researcherCacheRepository, ArticleRepository articleRepositoy, BookRepository bookRepository) {
         this.researcherRepository = researcherRepository;
         this.instituteService = instituteService;
         this.researcherCacheRepository = researcherCacheRepository;
