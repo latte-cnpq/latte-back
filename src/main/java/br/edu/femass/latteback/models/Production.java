@@ -43,7 +43,6 @@ public class Production {
     private Article article;
     @JoinColumn(name = "book", foreignKey = @ForeignKey(name = "book_fk"))
     private Book book;
-}
 
 public Production() {
 
@@ -60,4 +59,6 @@ public Production(String productionType, String productionDetails, List<String> 
 
 public String getAuthorNames() {
     return String.join(", ", authorNames);
+}
+
 }
