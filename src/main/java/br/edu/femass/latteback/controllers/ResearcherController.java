@@ -161,7 +161,7 @@ public class ResearcherController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Deletes a institute")
+    @Operation(summary = "Deletes a reseacher")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successful operation", content = @Content)})
     public ResponseEntity<Object> deleteResearcher(@PathVariable(value = "id") UUID id) {
         try {
