@@ -38,12 +38,15 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
             predicates.add(cb.like(bookRoot.get("title"), "%" + title + "%"));
         }
 
-        if(startDate != null) {
+        if(startDate != null && endDate == null) {
             predicates.add(cb.equal(bookRoot.get("year"), String.valueOf(startDate.getYear())));
-        }
-
-        if(endDate != null) {
+        } else if(startDate == null && endDate != null) {
             predicates.add(cb.equal(bookRoot.get("year"), String.valueOf(endDate.getYear())));
+        } else {
+            predicates.add(cb.or(
+                    cb.equal(bookRoot.get("year"), String.valueOf(startDate.getYear())),
+                    cb.equal(bookRoot.get("year"), String.valueOf(endDate.getYear()))
+            ));
         }
 
         if (researcherId != null) {

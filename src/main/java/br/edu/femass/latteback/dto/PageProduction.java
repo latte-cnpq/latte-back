@@ -14,6 +14,7 @@ public class PageProduction {
     private Integer perPage;
     private String ordination;
     private Sort.Direction direction;
+    private Long totalPage;
 
     public PageProduction() { }
 
@@ -24,6 +25,7 @@ public class PageProduction {
         this.perPage = perPage;
         this.ordination = "";
         this.direction = Sort.Direction.ASC;
+        this.totalPage = bookPage.getTotalElements() + articlePage.getTotalElements();
     }
 
     public PageProduction(Page<Book> bookPage, Page<Article> articlePage, Integer page, Integer perPage, String ordination, Sort.Direction direction) {

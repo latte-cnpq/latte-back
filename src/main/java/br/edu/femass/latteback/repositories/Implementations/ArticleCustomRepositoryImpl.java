@@ -36,12 +36,15 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
             predicates.add(cb.like(articleRoot.get("title"), "%" + title + "%"));
         }
 
-        if(startDate != null) {
+        if(startDate != null && endDate == null) {
             predicates.add(cb.equal(articleRoot.get("year"), String.valueOf(startDate.getYear())));
-        }
-
-        if(endDate != null) {
+        } else if(startDate == null && endDate != null) {
             predicates.add(cb.equal(articleRoot.get("year"), String.valueOf(endDate.getYear())));
+        } else {
+            predicates.add(cb.or(
+                cb.equal(articleRoot.get("year"), String.valueOf(startDate.getYear())),
+                cb.equal(articleRoot.get("year"), String.valueOf(endDate.getYear()))
+            ));
         }
 
         if (researcherId != null) {

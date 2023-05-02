@@ -1,20 +1,28 @@
 package br.edu.femass.latteback.controllers;
 import br.edu.femass.latteback.dto.CollectionProduction;
+import br.edu.femass.latteback.dto.PageProduction;
 import br.edu.femass.latteback.models.Institute;
 import br.edu.femass.latteback.services.ProductionService;
 import br.edu.femass.latteback.utils.enums.ProductionType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -85,37 +93,41 @@ public class ProductionController {
         }
     }
 
-   /*@GetMapping("/advancedsearch")
+   @GetMapping("/advancedsearch")
     @Operation(summary = "Find all productions using query search and pagination")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Page.class))}
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PageProduction.class))}
             ),
     })
     @Parameters({
-        @Parameter(name = "name", description = "Name of the researcher", in = ParameterIn.QUERY),
-        @Parameter(name = "production_type", description = "Type of production", in = ParameterIn.QUERY),
-        @Parameter(name = "production_details", description = "Details of production", in = ParameterIn.QUERY),
+        @Parameter(name = "title", description = "Title of the production", in = ParameterIn.QUERY),
+        @Parameter(name = "startDate", description = "Start date of period", in = ParameterIn.QUERY),
+        @Parameter(name = "endDate", description = "End date of period", in = ParameterIn.QUERY),
+        @Parameter(name = "researcherId", description = "Id of researcher to search", in = ParameterIn.QUERY),
+        @Parameter(name = "instituteId", description = "Id of institute to search", in = ParameterIn.QUERY),
         @Parameter(name = "page", description = "Page number", in = ParameterIn.QUERY, example = "0"),
         @Parameter(name = "perPage", description = "Number of items per page", in = ParameterIn.QUERY, example = "10"),
         @Parameter(name = "ordination", description = "Property used for sorting the results", in = ParameterIn.QUERY, example = "id"),
         @Parameter(name = "direction", description = "Sort direction (ASC or DESC)", in = ParameterIn.QUERY, example = "ASC")
     })
     public ResponseEntity<Object> findByAdvancedSearch(
-        @RequestParam(name = "name", required = false) final String name,
-        @RequestParam(name = "production_type", required = false) final String productionType,
-        @RequestParam(name = "production_details", required = false) final String productionDetails,
+        @RequestParam(name = "title", required = false) final String name,
+        @RequestParam(name = "startDate", required = false) final LocalDate startDate,
+        @RequestParam(name = "endDate", required = false) final LocalDate endDate,
+        @RequestParam(name = "researcherId", required = false) final UUID researcherId,
+        @RequestParam(name = "instituteId", required = false) final UUID instituteId,
         @RequestParam(defaultValue = "0") final int page,
-            @RequestParam(name = "perPage", defaultValue = "10") final int perPage,
-            @RequestParam(defaultValue = "id") final String ordination,
-            @RequestParam(defaultValue = "ASC") final Sort.Direction direction) {
+        @RequestParam(name = "perPage", defaultValue = "10") final int perPage,
+        @RequestParam(defaultValue = "id") final String ordination,
+        @RequestParam(defaultValue = "ASC") final Sort.Direction direction) {
             try {
                 final Pageable pageable = PageRequest.of(page, perPage, Sort.by(direction, ordination));
-                Page<Production> productions = null;
-                productions = productionService.AdvancedSearch(name, productionType, productionDetails, pageable);
+                PageProduction productions = null;
+                productions = productionService.AdvanceSearcher(name, startDate, endDate, researcherId, instituteId, pageable);
                 return ResponseEntity.status(HttpStatus.OK).body(productions);
             } catch (RuntimeException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
             }
-        }*/
+        }
 }
