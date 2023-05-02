@@ -44,15 +44,23 @@ public class ProductionService implements ProductionServiceInterface {
         return productions;
     }
 
+    public CollectionProduction getAllByInstitute(UUID instituteId) {
+        List<Book> books = bookRepository.findByInstitute(instituteId);
+        List<Article> articles = articleRepository.findByInstitute(instituteId);
+
+        CollectionProduction productions = new CollectionProduction(books, articles);
+
+        return productions;
+    }
+
     @Override
     public ProductionInterface getById(UUID productionId, ProductionType type) {
 
         return null;
     }
 
-
     @Override
-    public CollectionProduction AdvanceSearcher(String title, UUID researcherId, UUID instituteId, LocalDate startDate, LocalDate endDate, ProductionType type) {
+    public CollectionProduction AdvancedSearch(String title, UUID researcherId, UUID instituteId, LocalDate startDate, LocalDate endDate, ProductionType type) {
         return null;
     }
 }

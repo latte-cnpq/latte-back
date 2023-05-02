@@ -1,6 +1,5 @@
 package br.edu.femass.latteback.controllers;
 import br.edu.femass.latteback.dto.CollectionProduction;
-import br.edu.femass.latteback.models.Institute;
 import br.edu.femass.latteback.services.InstituteService;
 import br.edu.femass.latteback.services.ProductionService;
 import br.edu.femass.latteback.services.ResearcherService;
@@ -53,7 +52,7 @@ public class ProductionController {
     } catch (RuntimeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
-}
+    }
 
    /*@GetMapping("/advancedsearch")
     @Operation(summary = "Find all productions using query search and pagination")
