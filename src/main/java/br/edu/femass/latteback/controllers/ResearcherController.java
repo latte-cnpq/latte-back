@@ -154,6 +154,17 @@ public class ResearcherController {
         }
     }
 
+    @PostMapping("saveAll")
+    @Operation(summary = "Save all researcher")
+    public ResponseEntity<Object> saveAll(@RequestBody UUID instituteId) {
+        try {
+            researcherService.saveAll(instituteId);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Todos os pesquisadores foram salvos.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
     @Operation(summary = "Updates a researcher")
     public ResponseEntity<Object> updateResearcher(

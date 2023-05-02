@@ -17,8 +17,11 @@ public class CollectionProduction {
     @Getter
     @Setter
     private List<Article> articles = new ArrayList<>();
-    @Getter
-    private final Integer totalProductions = books.size() + articles.size();
+    private Integer totalProductions;
+
+    public Integer getTotalProductions() {
+        return books.size() + articles.size();
+    }
 
     public  CollectionProduction() { }
 

@@ -2,7 +2,10 @@ package br.edu.femass.latteback.controllers;
 import br.edu.femass.latteback.dto.CollectionProduction;
 import br.edu.femass.latteback.models.Institute;
 import br.edu.femass.latteback.services.ProductionService;
+import br.edu.femass.latteback.utils.enums.ProductionType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,12 +13,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -31,28 +32,58 @@ import java.util.List;
 public class ProductionController {
     
     private final ProductionService productionService;
-    //private final ResearcherService researcherService;
-    //private final InstituteService instituteService;
     
-    public ProductionController(ProductionService productionService/*, ResearcherService researcherService, InstituteService instituteService*/) {
+    public ProductionController(ProductionService productionService) {
         this.productionService = productionService;
-        /*this.instituteService = instituteService;
-        this.researcherService = researcherService;*/
-
     }
 
    @GetMapping("")
    @Operation(summary = "Find all productions")
+   @ApiResponses(value = {
+           @ApiResponse(responseCode = "200", description = "Successful operation",
+                   content = {@Content(array = @ArraySchema(schema = @Schema(implementation = CollectionProduction.class)))
+                   })
+   })
    public ResponseEntity<Object> getAll() {
-    try {
-        CollectionProduction productions = productionService.getAll();
-        return ResponseEntity.status(HttpStatus.OK).body(productions);
-    } catch (NotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    } catch (RuntimeException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        try {
+            CollectionProduction productions = productionService.getAll();
+            return ResponseEntity.ok(productions);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
-}
+    @GetMapping("/{id}")
+    @Operation(summary = "Find production by ID")
+    public ResponseEntity<Object> getById(
+            @Parameter(description = "The ID that needs to be fetched.", required = true, example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
+            @PathVariable UUID id,
+            @RequestParam(name = "type", required = true) final ProductionType type) {
+        try {
+            var result = productionService.getById(id, type);
+            return ResponseEntity.ok(result);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("getByResearcher/{id}")
+    @Operation(summary = "Find productions by researcher ID")
+    public ResponseEntity<Object> getByResearcher(
+            @Parameter(description = "The ID that needs to be fetched.", required = true, example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
+            @PathVariable UUID id) {
+        try {
+            var result = productionService.getAllByResearcher(id);
+            return ResponseEntity.ok(result);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 
    /*@GetMapping("/advancedsearch")
     @Operation(summary = "Find all productions using query search and pagination")
