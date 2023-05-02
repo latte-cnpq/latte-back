@@ -104,8 +104,9 @@ public class ProductionController {
         @Parameter(name = "title", description = "Title of the production", in = ParameterIn.QUERY),
         @Parameter(name = "startYear", description = "Start year of period", in = ParameterIn.QUERY, example = "2018"),
         @Parameter(name = "endYear", description = "End year of period", in = ParameterIn.QUERY, example = "2020"),
-        @Parameter(name = "researcherId", description = "Id of researcher to search", in = ParameterIn.QUERY),
-        @Parameter(name = "instituteId", description = "Id of institute to search", in = ParameterIn.QUERY),
+        @Parameter(name = "researcherName", description = "Name of researcher to search", in = ParameterIn.QUERY),
+        @Parameter(name = "instituteName", description = "Name of institute to search", in = ParameterIn.QUERY),
+        @Parameter(name = "type", description = "Production type to searcher", in = ParameterIn.QUERY),
         @Parameter(name = "page", description = "Page number", in = ParameterIn.QUERY, example = "0"),
         @Parameter(name = "perPage", description = "Number of items per page", in = ParameterIn.QUERY, example = "10"),
         @Parameter(name = "ordination", description = "Property used for sorting the results", in = ParameterIn.QUERY, example = "id"),
@@ -115,20 +116,33 @@ public class ProductionController {
         @RequestParam(name = "title", required = false) final String name,
         @RequestParam(name = "startYear", required = false) final Integer startYear,
         @RequestParam(name = "endYear", required = false) final Integer endYear,
-        @RequestParam(name = "researcherId", required = false) final UUID researcherId,
-        @RequestParam(name = "instituteId", required = false) final UUID instituteId,
+        @RequestParam(name = "researcherName", required = false) final String researcherName,
+        @RequestParam(name = "instituteName", required = false) final String instituteName,
+        @RequestParam(name = "type", required = false, defaultValue = "ALL") final ProductionType type,
         @RequestParam(defaultValue = "0") final int page,
         @RequestParam(name = "perPage", defaultValue = "10") final int perPage,
         @RequestParam(defaultValue = "id") final String ordination,
         @RequestParam(defaultValue = "ASC") final Sort.Direction direction) {
             try {
-                final Pageable pageable = PageRequest.of(page, perPage, Sort.by(direction, ordination));
+                Integer size = 0;
+
+                switch (type) {
+                    case BOOK:
+                    case ARTICLE:
+                        size = perPage;
+                        break;
+                    default:
+                        size = Math.round(perPage/2);
+                        break;
+                }
+
+                final Pageable pageable = PageRequest.of(page, size, Sort.by(direction, ordination));
                 PageProduction productions = null;
 
-                LocalDate startDate = LocalDate.of(startYear, 01, 01);
-                LocalDate endDate = LocalDate.of(endYear, 01, 01);
+                LocalDate startDate = startYear != null ? LocalDate.of(startYear, 01, 01) : null;
+                LocalDate endDate = endYear != null ? LocalDate.of(endYear, 01, 01) : null;
 
-                productions = productionService.AdvanceSearcher(name, startDate, endDate, researcherId, instituteId, pageable);
+                productions = productionService.AdvanceSearcher(name, startDate, endDate, researcherName, instituteName, type, pageable);
                 return ResponseEntity.status(HttpStatus.OK).body(productions);
             } catch (RuntimeException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

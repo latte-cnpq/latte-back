@@ -9,6 +9,6 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public interface ArticleCustomRepository {
-    Page<Article> AdvancedSearch(String title, LocalDate startDate, LocalDate endDate, UUID researcherId, UUID instituteId, Pageable pageable);
-    Page<Article> AdvancedSearch(String title, LocalDate startDate, LocalDate endDate, UUID researcherId, Pageable pageable);
+    Page<Article> AdvancedSearch(String title, LocalDate startDate, LocalDate endDate, String researcherName, String instituteName, Pageable pageable);
+    Page<Article> AdvancedSearch(String title, LocalDate startDate, LocalDate endDate, String researcherName, Pageable pageable);
 }

@@ -14,5 +14,5 @@ public interface ProductionServiceInterface {
 
     ProductionInterface getById(UUID productionId, ProductionType type);
 
-    PageProduction AdvanceSearcher(String title, LocalDate startDate, LocalDate endDate, UUID researcherId, UUID instituteId, Pageable pageable);
+    PageProduction AdvanceSearcher(String title, LocalDate startDate, LocalDate endDate, String researcherName, String instituteName, ProductionType type, Pageable pageable);
 }

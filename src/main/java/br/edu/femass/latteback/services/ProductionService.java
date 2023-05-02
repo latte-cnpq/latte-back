@@ -1,6 +1,7 @@
 package br.edu.femass.latteback.services;
 import br.edu.femass.latteback.dto.CollectionProduction;
 import br.edu.femass.latteback.dto.PageProduction;
+import br.edu.femass.latteback.dto.ProductionDTO;
 import br.edu.femass.latteback.dto.ProductionInterface;
 import br.edu.femass.latteback.models.Article;
 import br.edu.femass.latteback.models.Book;
@@ -16,8 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductionService implements ProductionServiceInterface {
@@ -76,25 +79,44 @@ public class ProductionService implements ProductionServiceInterface {
     }
 
     @Override
-    public PageProduction AdvanceSearcher(String title, LocalDate startDate, LocalDate endDate, UUID researcherId, UUID instituteId, Pageable pageable) {
-        Integer currentPage = 0;
+    public PageProduction AdvanceSearcher(String title, LocalDate startDate, LocalDate endDate, String researcherName, String instituteName, ProductionType type, Pageable pageable) {
+        Page<Article> articlePage = null;
+        Page<Book> bookPage = null;
+        List<ProductionDTO> productions = new ArrayList<>();
 
-        Page<Article> articlePage = articleRepository.AdvancedSearch(title, startDate, endDate, researcherId, pageable);
-        Page<Book> bookPage = bookRepository.AdvancedSearch(title, startDate, endDate, researcherId, pageable);
+        switch (type) {
+            case ARTICLE:
+                articlePage = articleRepository.AdvancedSearch(title, startDate, endDate, researcherName, pageable);
+                break;
+            case BOOK:
+                bookPage = bookRepository.AdvancedSearch(title, startDate, endDate, researcherName, pageable);
+                break;
+            default:
+                articlePage = articleRepository.AdvancedSearch(title, startDate, endDate, researcherName, pageable);
+                bookPage = bookRepository.AdvancedSearch(title, startDate, endDate, researcherName, pageable);
+                break;
 
-        final Integer bookCurrentPage = bookPage.getPageable().getPageNumber();
-        final Integer articleCurrentPage = articlePage.getPageable().getPageNumber();
-        final Integer pageSize = articlePage.getPageable().getPageSize();
-
-        if(bookCurrentPage > articleCurrentPage) {
-            currentPage = bookCurrentPage;
-        } else if (bookCurrentPage < articleCurrentPage) {
-            currentPage = articleCurrentPage;
-        } else {
-            currentPage = articleCurrentPage;
         }
 
-        PageProduction pageProduction = new PageProduction(bookPage, articlePage, currentPage, pageSize);
+        if(articlePage != null) {
+            productions.addAll(articlePage.getContent().stream().map(a -> {
+                String detail = a.getAuthorNames() + ";" + a.getTitle() + ";" + a.getPublishedOn() + ";" + a.getYear() + ";";
+                return new ProductionDTO(ProductionType.ARTICLE.label, detail);
+            }).collect(Collectors.toList()));
+        }
+
+        if(bookPage != null) {
+            productions.addAll(bookPage.getContent().stream().map(a -> {
+                String detail = a.getAuthorNames() + ";" + a.getTitle() + ";" + a.getPublisher() + ";" + a.getYear() + ";";
+                return new ProductionDTO(ProductionType.BOOK.label, detail);
+            }).collect(Collectors.toList()));
+        }
+
+        Integer currentPage = pageable.getPageNumber();
+        Integer pageSize = productions.size();
+
+
+        PageProduction pageProduction = new PageProduction(productions, currentPage, pageSize);
 
         return pageProduction;
     }

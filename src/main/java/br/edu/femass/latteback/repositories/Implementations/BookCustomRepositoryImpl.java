@@ -1,10 +1,10 @@
 package br.edu.femass.latteback.repositories.Implementations;
 
+import br.edu.femass.latteback.models.Article;
 import br.edu.femass.latteback.models.Book;
 import br.edu.femass.latteback.models.Institute;
 import br.edu.femass.latteback.models.Researcher;
 import br.edu.femass.latteback.repositories.BookCustomRepository;
-import br.edu.femass.latteback.repositories.InstituteRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -27,7 +27,7 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
     public BookCustomRepositoryImpl() { }
 
     @Override
-    public Page<Book> AdvancedSearch(String title, LocalDate startDate, LocalDate endDate, UUID researcherId, UUID instituteId, Pageable pageable) {
+    public Page<Book> AdvancedSearch(String title, LocalDate startDate, LocalDate endDate, String researcherName, String instituteName, Pageable pageable) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Book> cq = cb.createQuery(Book.class);
 
@@ -42,21 +42,21 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
             predicates.add(cb.equal(bookRoot.get("year"), String.valueOf(startDate.getYear())));
         } else if(startDate == null && endDate != null) {
             predicates.add(cb.equal(bookRoot.get("year"), String.valueOf(endDate.getYear())));
-        } else {
+        } else if(startDate != null && endDate != null) {
             predicates.add(cb.or(
                     cb.equal(bookRoot.get("year"), String.valueOf(startDate.getYear())),
                     cb.equal(bookRoot.get("year"), String.valueOf(endDate.getYear()))
             ));
         }
 
-        if (researcherId != null) {
-            Join<Book, Researcher> join = bookRoot.join("researcher");
-            predicates.add(cb.equal(join.get("id"), researcherId));
+        if (researcherName != null) {
+            Join<Article, Researcher> join = bookRoot.join("researcher");
+            predicates.add(cb.like(join.get("name"), "%" + researcherName + "%"));
         }
 
-        if (instituteId != null) {
+        if (instituteName != null) {
             Join<Researcher, Institute> firstJoin = bookRoot.join("institute");
-            predicates.add(cb.equal(firstJoin.get("id"), instituteId));
+            predicates.add(cb.like(firstJoin.get("name"), "%" + instituteName + "%"));
 
         }
 
@@ -77,7 +77,7 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
     }
 
     @Override
-    public Page<Book> AdvancedSearch(String title, LocalDate startDate, LocalDate endDate, UUID researcherId, Pageable pageable) {
-        return AdvancedSearch(title, startDate, endDate, researcherId, null, pageable);
+    public Page<Book> AdvancedSearch(String title, LocalDate startDate, LocalDate endDate, String researcherName, Pageable pageable) {
+        return AdvancedSearch(title, startDate, endDate, researcherName, null, pageable);
     }
 }
