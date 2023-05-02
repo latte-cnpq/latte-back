@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface BookRepository extends JpaRepository<Book, UUID> {
     List<Book> findByResearcher(UUID researcherId);
+    List<Book> findByInstitute(UUID instituteId);
 }

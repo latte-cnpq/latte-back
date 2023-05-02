@@ -1,7 +1,5 @@
 package br.edu.femass.latteback.controllers;
-
 import br.edu.femass.latteback.dto.ResearcherFormDTO;
-import br.edu.femass.latteback.models.Institute;
 import br.edu.femass.latteback.models.Researcher;
 import br.edu.femass.latteback.models.ResearcherCache;
 import br.edu.femass.latteback.repositories.ResearcherCacheRepository;
@@ -24,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
-
 import java.util.List;
 import java.util.UUID;
 
