@@ -61,6 +61,15 @@ public class ProductionService implements ProductionServiceInterface {
 
     @Override
     public CollectionProduction AdvancedSearch(String title, UUID researcherId, UUID instituteId, LocalDate startDate, LocalDate endDate, ProductionType type) {
+        List<Book> book = bookRepository.findByCriteria(title, researcherId, instituteId, startDate, endDate, type);
+        if (book != null) {
+            return (CollectionProduction) book;
+        }
+        List<Article> article = articleRepository.findByCriteria(title, researcherId, instituteId, startDate, endDate, type);
+        if (article != null) {
+            return (CollectionProduction) article;
+        }
+
         return null;
     }
 }
