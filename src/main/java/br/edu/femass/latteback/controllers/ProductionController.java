@@ -102,8 +102,8 @@ public class ProductionController {
     })
     @Parameters({
         @Parameter(name = "title", description = "Title of the production", in = ParameterIn.QUERY),
-        @Parameter(name = "startDate", description = "Start date of period", in = ParameterIn.QUERY),
-        @Parameter(name = "endDate", description = "End date of period", in = ParameterIn.QUERY),
+        @Parameter(name = "startYear", description = "Start year of period", in = ParameterIn.QUERY, example = "2018"),
+        @Parameter(name = "endYear", description = "End year of period", in = ParameterIn.QUERY, example = "2020"),
         @Parameter(name = "researcherId", description = "Id of researcher to search", in = ParameterIn.QUERY),
         @Parameter(name = "instituteId", description = "Id of institute to search", in = ParameterIn.QUERY),
         @Parameter(name = "page", description = "Page number", in = ParameterIn.QUERY, example = "0"),
@@ -113,8 +113,8 @@ public class ProductionController {
     })
     public ResponseEntity<Object> findByAdvancedSearch(
         @RequestParam(name = "title", required = false) final String name,
-        @RequestParam(name = "startDate", required = false) final LocalDate startDate,
-        @RequestParam(name = "endDate", required = false) final LocalDate endDate,
+        @RequestParam(name = "startYear", required = false) final Integer startYear,
+        @RequestParam(name = "endYear", required = false) final Integer endYear,
         @RequestParam(name = "researcherId", required = false) final UUID researcherId,
         @RequestParam(name = "instituteId", required = false) final UUID instituteId,
         @RequestParam(defaultValue = "0") final int page,
@@ -124,6 +124,10 @@ public class ProductionController {
             try {
                 final Pageable pageable = PageRequest.of(page, perPage, Sort.by(direction, ordination));
                 PageProduction productions = null;
+
+                LocalDate startDate = LocalDate.of(startYear, 01, 01);
+                LocalDate endDate = LocalDate.of(endYear, 01, 01);
+
                 productions = productionService.AdvanceSearcher(name, startDate, endDate, researcherId, instituteId, pageable);
                 return ResponseEntity.status(HttpStatus.OK).body(productions);
             } catch (RuntimeException e) {
