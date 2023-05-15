@@ -126,15 +126,15 @@ public class ProductionController {
             try {
                 Integer size = 0;
 
-                switch (type) {
-                    case BOOK:
-                    case ARTICLE:
-                        size = perPage;
-                        break;
-                    default:
-                        size = Math.round(perPage/2);
-                        break;
-                }
+                    switch (type) {
+                        case BOOK:
+                        case ARTICLE:
+                            size = perPage;
+                            break;
+                        default:
+                            size = (int) Math.ceil(perPage/2);
+                            break;
+                    }
 
                 final Pageable pageable = PageRequest.of(page, size, Sort.by(direction, ordination));
                 PageProduction productions = null;

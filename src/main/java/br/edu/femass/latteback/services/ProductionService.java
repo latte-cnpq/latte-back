@@ -114,9 +114,18 @@ public class ProductionService implements ProductionServiceInterface {
 
         Integer currentPage = pageable.getPageNumber();
         Integer pageSize = productions.size();
+        Integer totalPage = 0;
+
+        if(articlePage.getTotalPages() > bookPage.getTotalPages()) {
+            totalPage = articlePage.getTotalPages();
+        } else if(articlePage.getTotalPages() < bookPage.getTotalPages()) {
+            totalPage = bookPage.getTotalPages();
+        } else {
+            totalPage = articlePage.getTotalPages();
+        }
 
 
-        PageProduction pageProduction = new PageProduction(productions, currentPage, pageSize);
+        PageProduction pageProduction = new PageProduction(productions, currentPage, pageSize, totalPage);
 
         return pageProduction;
     }
