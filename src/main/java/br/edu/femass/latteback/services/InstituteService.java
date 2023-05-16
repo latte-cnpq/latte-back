@@ -83,6 +83,12 @@ public class InstituteService implements InstituteServiceInterface {
         return instituteRepository.save(foundInstitute.get());
     }
 
+    @Override
+    public Long getInstituteTotalCount() {
+        return instituteRepository.count();
+    }
+
+
     public Page<Institute> AdvancedSearch(String name, String acronym, Pageable pageable) {
         return instituteRepository.AdvancedSearch(name, acronym, pageable);
     }

@@ -2,6 +2,7 @@ package br.edu.femass.latteback.controllers;
 
 import br.edu.femass.latteback.models.charts.CircleData;
 import br.edu.femass.latteback.models.charts.ColumnData;
+import br.edu.femass.latteback.models.charts.CounterData;
 import br.edu.femass.latteback.services.DataService;
 import br.edu.femass.latteback.utils.enums.ProductionType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -159,6 +160,26 @@ public class DataController {
         }
     }
 
+    //endregion
 
+    //region counter
+
+    @GetMapping("counters")
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation",
+                    content = {@Content(array = @ArraySchema(schema = @Schema(implementation = CounterData.class)))
+                    })
+    })
+    public ResponseEntity<Object> getCounters() {
+        try {
+            CounterData result = dataService.getCounterData();
+            return ResponseEntity.ok(result);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
     //endregion
 }

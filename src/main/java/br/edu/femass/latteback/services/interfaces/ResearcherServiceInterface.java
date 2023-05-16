@@ -19,6 +19,8 @@ public interface ResearcherServiceInterface {
 
     Researcher update(UUID id, Researcher researcher);
 
+    Long getResearcherTotalCount();
+
     Page<Researcher> AdvancedSearch(String name, String instituteAcronym, Pageable pageable);
 
 }

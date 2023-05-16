@@ -5,6 +5,7 @@ import br.edu.femass.latteback.models.Article;
 import br.edu.femass.latteback.models.Book;
 import br.edu.femass.latteback.models.charts.CircleData;
 import br.edu.femass.latteback.models.charts.ColumnData;
+import br.edu.femass.latteback.models.charts.CounterData;
 import br.edu.femass.latteback.services.interfaces.DataServiceInterface;
 import br.edu.femass.latteback.utils.enums.ProductionType;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,13 @@ import java.util.stream.Collectors;
 public class DataService implements DataServiceInterface {
 
     private final ProductionService productionService;
+    private final ResearcherService researcherService;
+    private final InstituteService instituteService;
 
-    public DataService(ProductionService productionService) {
+    public DataService(ProductionService productionService, ResearcherService researcherService, InstituteService instituteService) {
         this.productionService = productionService;
+        this.researcherService = researcherService;
+        this.instituteService = instituteService;
     }
 
     @Override
@@ -148,6 +153,14 @@ public class DataService implements DataServiceInterface {
         int totalBooks = productions.getBooks().size();
 
         CircleData data = new CircleData(totalArticles, totalBooks);
+        return data;
+    }
+
+    @Override
+    public CounterData getCounterData() {
+        Long totalInstitute = instituteService.getInstituteTotalCount();
+        Long totalResearcher = researcherService.getResearcherTotalCount();
+        CounterData data = new CounterData(totalInstitute, totalResearcher);
         return data;
     }
 }

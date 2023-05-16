@@ -18,5 +18,8 @@ public interface InstituteServiceInterface {
 
     Institute update(UUID id, Institute institute);
 
+    Long getInstituteTotalCount();
+
     Page<Institute> AdvancedSearch(String name, String acronym, Pageable pageable);
+
 }
