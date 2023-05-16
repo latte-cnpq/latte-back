@@ -3,15 +3,18 @@ package br.edu.femass.latteback.controllers;
 import br.edu.femass.latteback.models.charts.CircleData;
 import br.edu.femass.latteback.models.charts.ColumnData;
 import br.edu.femass.latteback.services.DataService;
+import br.edu.femass.latteback.utils.enums.ProductionType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -96,6 +99,36 @@ public class DataController {
             @RequestParam(name = "endYear", required = true) final Integer endYear) {
         try {
             List<ColumnData> results = dataService.getByYearRange(startYear, endYear);
+            return ResponseEntity.ok(results);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("columns/getProductionsByFilter")
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation",
+                    content = {@Content(array = @ArraySchema(schema = @Schema(implementation = ColumnData.class)))
+                    })
+    })
+    @Parameters({
+            @Parameter(name = "startYear", description = "Start year of period", in = ParameterIn.QUERY, example = "2018"),
+            @Parameter(name = "endYear", description = "End year of period", in = ParameterIn.QUERY, example = "2021"),
+            @Parameter(name = "researcherName", description = "Name of researcher to search", in = ParameterIn.QUERY),
+            @Parameter(name = "instituteName", description = "Name of institute to search", in = ParameterIn.QUERY),
+            @Parameter(name = "type", description = "Production type to searcher", in = ParameterIn.QUERY)
+    })
+    public ResponseEntity<Object> getProductionsByFilter(
+            @RequestParam(name = "startYear", required = false) final Integer startYear,
+            @RequestParam(name = "endYear", required = false) final Integer endYear,
+            @RequestParam(name = "researcherName", required = false) final String researcherName,
+            @RequestParam(name = "instituteName", required = false) final String instituteName,
+            @RequestParam(name = "type", required = false, defaultValue = "ALL") final ProductionType type) {
+        try {
+            List<ColumnData> results = dataService.getColumnDataByFilter(startYear, endYear, researcherName, instituteName, type);
             return ResponseEntity.ok(results);
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
