@@ -1,4 +1,4 @@
-package br.edu.femass.latteback.repositories;
+package br.edu.femass.latteback.models.repositories;
 
 import br.edu.femass.latteback.models.Article;
 import br.edu.femass.latteback.models.Researcher;
@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface ArticleRepository extends JpaRepository<Article, UUID>, ArticleCustomRepository {
     List<Article> findByResearcher(Researcher researcher);
+    List<Article> findByTitleIgnoreCase(String title);
 }

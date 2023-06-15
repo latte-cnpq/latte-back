@@ -1,10 +1,9 @@
 package br.edu.femass.latteback.services;
 import br.edu.femass.latteback.models.*;
-import br.edu.femass.latteback.repositories.ArticleRepository;
-import br.edu.femass.latteback.repositories.BookRepository;
-import br.edu.femass.latteback.repositories.ResearcherCacheRepository;
-import br.edu.femass.latteback.repositories.ResearcherRepository;
+import br.edu.femass.latteback.models.graph.Collaboration;
+import br.edu.femass.latteback.models.repositories.*;
 import br.edu.femass.latteback.services.interfaces.ResearcherServiceInterface;
+import br.edu.femass.latteback.utils.enums.ProductionType;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,13 +29,15 @@ public class ResearcherService implements ResearcherServiceInterface {
     private final ResearcherCacheRepository researcherCacheRepository;
     private final ArticleRepository articleRepository;
     private final BookRepository bookRepository;
+    private final CollaborationRepository collaborationRepository;
 
-    public ResearcherService(ResearcherRepository researcherRepository, InstituteService instituteService, ResearcherCacheRepository researcherCacheRepository, ArticleRepository articleRepository, BookRepository bookRepository) {
+    public ResearcherService(ResearcherRepository researcherRepository, InstituteService instituteService, ResearcherCacheRepository researcherCacheRepository, ArticleRepository articleRepository, BookRepository bookRepository, CollaborationRepository collaborationRepository) {
         this.researcherRepository = researcherRepository;
         this.instituteService = instituteService;
         this.researcherCacheRepository = researcherCacheRepository;
         this.articleRepository = articleRepository;
         this.bookRepository = bookRepository;
+        this.collaborationRepository = collaborationRepository;
     }
 
     private static String getString(Document doc, String tagname, String name) {
@@ -141,8 +142,7 @@ public class ResearcherService implements ResearcherServiceInterface {
             for (File file : files) {
                 System.out.println(file.getName());
                 if (file.isFile() && file.getName().contains(".xml"))
-                getResearcherFromFile(file.getName(), instituteId);
-
+                    getResearcherFromFile(file.getName(), instituteId);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -161,20 +161,33 @@ public class ResearcherService implements ResearcherServiceInterface {
                 String articleYear = articleData.getAttribute("ANO-DO-ARTIGO");
 
                 Element articleElement = (Element) articlesList.item(i);
-                Element detalheArtigo = (Element) articleElement.getElementsByTagName("DETALHAMENTO-DO-ARTIGO").item(0);
-                String publisher = detalheArtigo.getAttribute("TITULO-DO-PERIODICO-OU-REVISTA");
-                String volume = detalheArtigo.getAttribute("VOLUME");
-                String paginas = detalheArtigo.getAttribute("PAGINA-INICIAL") + " - " + detalheArtigo.getAttribute("PAGINA-FINAL");
+                Element articleDetails = (Element) articleElement.getElementsByTagName("DETALHAMENTO-DO-ARTIGO").item(0);
+                String publisher = articleDetails.getAttribute("TITULO-DO-PERIODICO-OU-REVISTA");
+                String volume = articleDetails.getAttribute("VOLUME");
+                String pages = articleDetails.getAttribute("PAGINA-INICIAL") + " - " + articleDetails.getAttribute("PAGINA-FINAL");
 
-                NodeList autoresArtigo = artigoPublicadoElement.getElementsByTagName("AUTORES");
-                ArrayList<String> autores = new ArrayList<>();
-                for (int j = 0; j < autoresArtigo.getLength(); j++) {
-                    Element autorArtigo = (Element) autoresArtigo.item(j);
-                    String nomeAutor = autorArtigo.getAttribute("NOME-PARA-CITACAO");
-                    autores.add(nomeAutor);
+                NodeList articleAuthors = artigoPublicadoElement.getElementsByTagName("AUTORES");
+                ArrayList<String> authors = new ArrayList<>();
+                for (int j = 0; j < articleAuthors.getLength(); j++) {
+                    Element articleAuthor = (Element) articleAuthors.item(j);
+                    String authorName = articleAuthor.getAttribute("NOME-PARA-CITACAO");
+                    authors.add(authorName);
                 }
 
-                Article article = new Article(articleTitle, publisher, volume, paginas, articleYear, autores, researcher);
+                Article article = new Article(articleTitle, publisher, volume, pages, articleYear, authors, researcher);
+                List<Article> duplicateArticles = articleRepository.findByTitleIgnoreCase(articleTitle);
+                if (!duplicateArticles.isEmpty()) {
+                    for (Article duplicatedArticle : duplicateArticles) {
+                        UUID authorOneID = duplicatedArticle.getResearcher().getId();
+                        UUID authorTwoID = researcher.getId();
+                        if (authorOneID != authorTwoID) {
+                            String title = duplicatedArticle.getTitle();
+                            Collaboration collaboration = new Collaboration(authorOneID, authorTwoID, title, ProductionType.ARTICLE);
+                            collaborationRepository.save(collaboration);
+                        }
+                    }
+
+                }
                 articleRepository.save(article);
             }
         }
@@ -185,23 +198,37 @@ public class ResearcherService implements ResearcherServiceInterface {
 
         for (int i = 0; i < livrosLIsta.getLength(); i++) {
             Element livroPublicadoElement = (Element) livrosLIsta.item(i);
-            Element dadosLivro = (Element) livroPublicadoElement.getElementsByTagName("DADOS-BASICOS-DO-LIVRO").item(0);
-            String tituloLivro = dadosLivro.getAttribute("TITULO-DO-LIVRO");
-            String anoLivro = dadosLivro.getAttribute("ANO");
+            Element bookData = (Element) livroPublicadoElement.getElementsByTagName("DADOS-BASICOS-DO-LIVRO").item(0);
+            String bookTitle = bookData.getAttribute("TITULO-DO-LIVRO");
+            String bookYear = bookData.getAttribute("ANO");
 
-            Element detalheLivro = (Element) livroPublicadoElement.getElementsByTagName("DETALHAMENTO-DO-LIVRO").item(0);
-            String publisher = detalheLivro.getAttribute("NOME-DA-EDITORA");
-            String volume = detalheLivro.getAttribute("NUMERO-DE-VOLUMES");
-            String paginas = detalheLivro.getAttribute("NUMERO-DE-PAGINAS");
+            Element bookDetails = (Element) livroPublicadoElement.getElementsByTagName("DETALHAMENTO-DO-LIVRO").item(0);
+            String publisher = bookDetails.getAttribute("NOME-DA-EDITORA");
+            String volume = bookDetails.getAttribute("NUMERO-DE-VOLUMES");
+            String pages = bookDetails.getAttribute("NUMERO-DE-PAGINAS");
 
-            NodeList autoresLivro = livroPublicadoElement.getElementsByTagName("AUTORES");
-            ArrayList<String> autores = new ArrayList<>();
-            for (int j = 0; j < autoresLivro.getLength(); j++) {
-                Element autorArtigo = (Element) autoresLivro.item(j);
-                String nomeAutor = autorArtigo.getAttribute("NOME-PARA-CITACAO");
-                autores.add(nomeAutor);
+            NodeList bookAuthors = livroPublicadoElement.getElementsByTagName("AUTORES");
+            ArrayList<String> authors = new ArrayList<>();
+            for (int j = 0; j < bookAuthors.getLength(); j++) {
+                Element bookAuthor = (Element) bookAuthors.item(j);
+                String authorName = bookAuthor.getAttribute("NOME-PARA-CITACAO");
+                authors.add(authorName);
             }
-            Book book = new Book(tituloLivro, publisher, volume, paginas, anoLivro, autores, researcher);
+            Book book = new Book(bookTitle, publisher, volume, pages, bookYear, authors, researcher);
+            List<Book> duplicateBooks = bookRepository.findByTitleIgnoreCase(bookTitle);
+            if (!duplicateBooks.isEmpty()) {
+                for (Book duplicateBook : duplicateBooks) {
+                    UUID authorOneID = duplicateBook.getResearcher().getId();
+                    UUID authorTwoID = researcher.getId();
+                    if (authorOneID != authorTwoID) {
+                        String title = duplicateBook.getTitle();
+                        Collaboration collaboration = new Collaboration(authorOneID, authorTwoID, title, ProductionType.BOOK);
+                        collaborationRepository.save(collaboration);
+                    }
+                }
+
+            }
+
             bookRepository.save(book);
         }
     }

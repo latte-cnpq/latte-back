@@ -56,4 +56,8 @@ public class Article implements ProductionInterface {
     public String getAuthorNames() {
         return String.join(", ", authorNames);
     }
+
+    public Researcher getResearcher(){
+        return this.researcher;
+    }
 }

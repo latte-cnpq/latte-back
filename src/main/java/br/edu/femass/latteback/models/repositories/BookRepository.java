@@ -1,4 +1,4 @@
-package br.edu.femass.latteback.repositories;
+package br.edu.femass.latteback.models.repositories;
 
 import br.edu.femass.latteback.models.Book;
 import br.edu.femass.latteback.models.Researcher;
@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface BookRepository extends JpaRepository<Book, UUID>, BookCustomRepository {
     List<Book> findByResearcher(Researcher researcher);
+    List<Book> findByTitleIgnoreCase(String title);
 }
