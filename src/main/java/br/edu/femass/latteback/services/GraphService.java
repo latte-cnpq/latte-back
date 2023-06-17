@@ -5,7 +5,7 @@ import br.edu.femass.latteback.models.graph.Collaboration;
 import br.edu.femass.latteback.models.graph.dto.EdgeDTO;
 import br.edu.femass.latteback.models.graph.dto.GraphDataDTO;
 import br.edu.femass.latteback.models.graph.dto.NodeDTO;
-import br.edu.femass.latteback.models.repositories.CollaborationRepository;
+import br.edu.femass.latteback.repositories.CollaborationRepository;
 import br.edu.femass.latteback.services.interfaces.GraphServiceInterface;
 import org.springframework.stereotype.Service;
 

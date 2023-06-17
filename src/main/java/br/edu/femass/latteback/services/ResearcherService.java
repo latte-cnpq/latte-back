@@ -1,7 +1,7 @@
 package br.edu.femass.latteback.services;
 import br.edu.femass.latteback.models.*;
 import br.edu.femass.latteback.models.graph.Collaboration;
-import br.edu.femass.latteback.models.repositories.*;
+import br.edu.femass.latteback.repositories.*;
 import br.edu.femass.latteback.services.interfaces.ResearcherServiceInterface;
 import br.edu.femass.latteback.utils.enums.ProductionType;
 import jakarta.transaction.Transactional;
@@ -62,8 +62,7 @@ public class ResearcherService implements ResearcherServiceInterface {
 
         researcherFile = researcherCache.isPresent() ? researcherCache.get().getFileName() : searchFiles(researcherIdNumber).getFileName();
 
-        Researcher researcher = getResearcherFromFile(researcherFile, instituteID);
-        return researcher;
+        return getResearcherFromFile(researcherFile, instituteID);
     }
 
     public Optional<ResearcherCache> findResearcherOnCache(String researcheridNumber) {
@@ -178,19 +177,31 @@ public class ResearcherService implements ResearcherServiceInterface {
                 List<Article> duplicateArticles = articleRepository.findByTitleIgnoreCase(articleTitle);
                 if (!duplicateArticles.isEmpty()) {
                     for (Article duplicatedArticle : duplicateArticles) {
+                        Researcher authorOne = duplicatedArticle.getResearcher();
+                        Researcher authorTwo = researcher;
                         UUID authorOneID = duplicatedArticle.getResearcher().getId();
                         UUID authorTwoID = researcher.getId();
-                        if (authorOneID != authorTwoID) {
-                            String title = duplicatedArticle.getTitle();
-                            Collaboration collaboration = new Collaboration(authorOneID, authorTwoID, title, ProductionType.ARTICLE);
-                            collaborationRepository.save(collaboration);
+                        String title = duplicatedArticle.getTitle();
+                        Collaboration collaboration;
+                        switch (authorOneID.compareTo(authorTwoID)) {
+                            case -1:
+                                collaboration = new Collaboration(authorOne, authorTwo, title, ProductionType.ARTICLE);
+                                break;
+                            case 1:
+                                collaboration = new Collaboration(authorTwo, authorOne, title, ProductionType.ARTICLE);
+                                break;
+                            default:
+                                return;
                         }
+                        collaborationRepository.save(collaboration);
                     }
-
                 }
+
+
                 articleRepository.save(article);
             }
         }
+
     }
 
     private void getResearcherBooks(Researcher researcher, Document doc) {
@@ -218,13 +229,23 @@ public class ResearcherService implements ResearcherServiceInterface {
             List<Book> duplicateBooks = bookRepository.findByTitleIgnoreCase(bookTitle);
             if (!duplicateBooks.isEmpty()) {
                 for (Book duplicateBook : duplicateBooks) {
+                    Researcher authorOne = duplicateBook.getResearcher();
+                    Researcher authorTwo = researcher;
                     UUID authorOneID = duplicateBook.getResearcher().getId();
                     UUID authorTwoID = researcher.getId();
-                    if (authorOneID != authorTwoID) {
-                        String title = duplicateBook.getTitle();
-                        Collaboration collaboration = new Collaboration(authorOneID, authorTwoID, title, ProductionType.BOOK);
-                        collaborationRepository.save(collaboration);
+                    String title = duplicateBook.getTitle();
+                    Collaboration collaboration;
+                    switch (authorOneID.compareTo(authorTwoID)){
+                        case -1:
+                            collaboration = new Collaboration(authorOne, authorTwo, title, ProductionType.BOOK);
+                            break;
+                        case 1:
+                            collaboration = new Collaboration(authorTwo, authorOne, title, ProductionType.BOOK);
+                            break;
+                        default:
+                            return;
                     }
+                    collaborationRepository.save(collaboration);
                 }
 
             }

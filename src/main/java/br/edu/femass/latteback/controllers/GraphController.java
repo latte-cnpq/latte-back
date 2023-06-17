@@ -74,7 +74,7 @@ public class GraphController {
             @RequestParam(name = "researcherName", required = false) final String researcherName,
             @RequestParam(name = "instituteName", required = false) final String instituteName,
             @RequestParam(name = "productionType", required = false) final String productionType,
-            @RequestParam(name = "nodeType") final String nodeType){
+            @RequestParam(name = "nodeType", required = false) final String nodeType){
 
         try {
             var filterCollab = graphService.getGraphDataByFilter(instituteName, productionType, researcherName);

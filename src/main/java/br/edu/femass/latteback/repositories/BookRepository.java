@@ -1,4 +1,4 @@
-package br.edu.femass.latteback.models.repositories;
+package br.edu.femass.latteback.repositories;
 
 import br.edu.femass.latteback.models.Book;
 import br.edu.femass.latteback.models.Researcher;

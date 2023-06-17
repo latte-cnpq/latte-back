@@ -40,7 +40,7 @@ public class NodeDTO {
         Map<String, Object> json = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
         data.put("id", id.toString());
-        data.put("label", researcherLabel);
+        data.put("researcherLabel", researcherLabel);
         data.put("instituteLabel", instituteLabel);
         json.put("data", data);
         return json;

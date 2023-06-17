@@ -7,7 +7,6 @@ import br.edu.femass.latteback.models.Article;
 import br.edu.femass.latteback.models.Book;
 import br.edu.femass.latteback.models.Researcher;
 import br.edu.femass.latteback.repositories.ArticleRepository;
-import br.edu.femass.latteback.repositories.ArticleRepositoy;
 import br.edu.femass.latteback.repositories.BookRepository;
 import br.edu.femass.latteback.repositories.ResearcherRepository;
 import br.edu.femass.latteback.services.interfaces.ProductionServiceInterface;

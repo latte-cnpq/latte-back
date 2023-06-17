@@ -1,4 +1,4 @@
-package br.edu.femass.latteback.models.repositories;
+package br.edu.femass.latteback.repositories;
 
 import br.edu.femass.latteback.models.graph.Collaboration;
 import org.springframework.data.jpa.repository.JpaRepository;
