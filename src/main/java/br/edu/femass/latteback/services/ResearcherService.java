@@ -186,17 +186,15 @@ public class ResearcherService implements ResearcherServiceInterface {
                         switch (authorOneID.compareTo(authorTwoID)) {
                             case -1:
                                 collaboration = new Collaboration(authorOne, authorTwo, title, ProductionType.ARTICLE);
+                                collaborationRepository.save(collaboration);
                                 break;
                             case 1:
                                 collaboration = new Collaboration(authorTwo, authorOne, title, ProductionType.ARTICLE);
-                                break;
-                            case 0:
-                                collaboration = new Collaboration(authorOne, authorOne, title, ProductionType.ARTICLE);
+                                collaborationRepository.save(collaboration);
                                 break;
                             default:
-                                return;
+                                break;
                         }
-                        collaborationRepository.save(collaboration);
                     }
                 }
 
@@ -238,20 +236,18 @@ public class ResearcherService implements ResearcherServiceInterface {
                     UUID authorTwoID = researcher.getId();
                     String title = duplicateBook.getTitle();
                     Collaboration collaboration;
-                    switch (authorOneID.compareTo(authorTwoID)){
-                        case -1:
+                    switch (authorOneID.compareTo(authorTwoID)) {
+                        case -1 -> {
                             collaboration = new Collaboration(authorOne, authorTwo, title, ProductionType.BOOK);
-                            break;
-                        case 1:
+                            collaborationRepository.save(collaboration);
+                        }
+                        case 1 -> {
                             collaboration = new Collaboration(authorTwo, authorOne, title, ProductionType.BOOK);
-                            break;
-                       /* case 0:
-                            collaboration = new Collaboration(authorOne, authorOne, title, ProductionType.BOOK);
-                            break;*/
-                        default:
-                            return;
+                            collaborationRepository.save(collaboration);
+                        }
+                        default -> {
+                        }
                     }
-                    collaborationRepository.save(collaboration);
                 }
 
             }

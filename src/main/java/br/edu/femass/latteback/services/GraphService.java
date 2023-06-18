@@ -7,6 +7,8 @@ import br.edu.femass.latteback.models.graph.dto.EdgeDTO;
 import br.edu.femass.latteback.models.graph.dto.GraphDataDTO;
 import br.edu.femass.latteback.models.graph.dto.NodeDTO;
 import br.edu.femass.latteback.repositories.CollaborationRepository;
+import br.edu.femass.latteback.repositories.InstituteRepository;
+import br.edu.femass.latteback.repositories.ResearcherRepository;
 import br.edu.femass.latteback.services.interfaces.GraphServiceInterface;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +18,21 @@ import java.util.*;
 public class GraphService implements GraphServiceInterface {
 
     private final CollaborationRepository collaborationRepository;
+    private final InstituteRepository instituteRepository;
+    private final ResearcherRepository researcherRepository;
 
-    public GraphService(CollaborationRepository collaborationRepository) {
+
+    public GraphService(CollaborationRepository collaborationRepository, InstituteRepository instituteRepository, ResearcherRepository researcherRepository) {
         this.collaborationRepository = collaborationRepository;
+        this.instituteRepository = instituteRepository;
+        this.researcherRepository = researcherRepository;
     }
 
     public List<Collaboration> getCollaborationByInstituteName(String instituteName){
         return collaborationRepository.findByInstituteName(instituteName);
     }
     //Todo: researcher name => researcher id
-    public GraphDataDTO getGraphDataByFilter(String instituteName, String productionType, String researcherName, String nodeType){
+    public GraphDataDTO getGraphDataByFilter(String instituteName, String productionType, String researcherName, String nodeType, Boolean getAll){
         List<Collaboration> collaborationList = collaborationRepository.filterCollaborations(instituteName, productionType, researcherName);
 
         Map<UUID, NodeDTO> nodesMap = new HashMap<>();
@@ -59,7 +66,6 @@ public class GraphService implements GraphServiceInterface {
                 }
             }
             else if (nodeType.equalsIgnoreCase("institute")){
-
                     if (nodesMap.containsKey(firstInstitute.getId()))
                         nodesMap.get(firstInstitute.getId()).addCount();
                     else {
@@ -96,7 +102,29 @@ public class GraphService implements GraphServiceInterface {
                 researcherEdgesMap.put(edgeKey, newEdge);
             }
         }
-
+        if (getAll && nodeType.equalsIgnoreCase("researcher")){
+            List<Researcher> researchers = researcherRepository.findAll();
+            for (Researcher researcher: researchers) {
+                if (!nodesMap.containsKey(researcher.getId())) {
+                    NodeDTO temp = new NodeDTO();
+                    temp.setId(researcher.getId());
+                    temp.setLabel(researcher.getName());
+                    temp.setCount(0);
+                    nodesMap.put(researcher.getId(), temp);}
+            }
+        }
+        if (getAll && nodeType.equalsIgnoreCase("institute")){
+            List<Institute> institutes = instituteRepository.findAll();
+            for (Institute institute: institutes) {
+                if (!nodesMap.containsKey(institute.getId())) {
+                    NodeDTO temp = new NodeDTO();
+                    temp.setId(institute.getId());
+                    temp.setLabel(institute.getAcronym());
+                    temp.setCount(0);
+                    nodesMap.put(institute.getId(), temp);
+                }
+            }
+        }
         List<Map<String, Object>> nodeData = new ArrayList<>();
 
         for (NodeDTO node : nodesMap.values()) {
@@ -107,13 +135,6 @@ public class GraphService implements GraphServiceInterface {
         for (EdgeDTO edge : researcherEdgesMap.values()) {
             edgeData.add(edge.toJson());
         }
-        /*for (EdgeDTO edge : researcherEdgesMap.values().stream().toList()){
-            EdgeDTO newEdge = new EdgeDTO();
-            newEdge.setSourceId(edge.getSourceId());
-            newEdge.setTargetId(edge.getTargetId());
-            newEdge.setRepetitionCount(edge.getRepetitionCount());
-            edgeData.add(newEdge);
-        }*/
 
         GraphDataDTO graphDataDTO = new GraphDataDTO();
         graphDataDTO.setEdges(edgeData);
