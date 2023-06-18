@@ -68,13 +68,13 @@ public class GraphController {
             @Parameter(name = "researcherName", description = "Name of the researcher", in = ParameterIn.QUERY),
             @Parameter(name = "instituteName", description = "Name of the institute", in = ParameterIn.QUERY),
             @Parameter(name = "productionType", description = "Production type", in = ParameterIn.QUERY, example = "ARTICLE or BOOK"),
-            @Parameter(name = "nodeType", description = "Whether nodes are researchers or institutes", in = ParameterIn.QUERY)
+            @Parameter(name = "nodeType", description = "Whether nodes are researchers or institutes", in = ParameterIn.QUERY, example = "institute or researcher")
     })
     public ResponseEntity<Object> filterCollaborations(
             @RequestParam(name = "researcherName", required = false) final String researcherName,
             @RequestParam(name = "instituteName", required = false) final String instituteName,
             @RequestParam(name = "productionType", required = false) final String productionType,
-            @RequestParam(name = "nodeType", required = false) final String nodeType){
+            @RequestParam(name = "nodeType") final String nodeType){
 
         try {
             var filterCollab = graphService.getGraphDataByFilter(instituteName, productionType, researcherName, nodeType);
