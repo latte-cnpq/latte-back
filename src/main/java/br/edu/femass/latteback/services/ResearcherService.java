@@ -190,6 +190,9 @@ public class ResearcherService implements ResearcherServiceInterface {
                             case 1:
                                 collaboration = new Collaboration(authorTwo, authorOne, title, ProductionType.ARTICLE);
                                 break;
+                            case 0:
+                                collaboration = new Collaboration(authorOne, authorOne, title, ProductionType.ARTICLE);
+                                break;
                             default:
                                 return;
                         }
@@ -242,6 +245,9 @@ public class ResearcherService implements ResearcherServiceInterface {
                         case 1:
                             collaboration = new Collaboration(authorTwo, authorOne, title, ProductionType.BOOK);
                             break;
+                       /* case 0:
+                            collaboration = new Collaboration(authorOne, authorOne, title, ProductionType.BOOK);
+                            break;*/
                         default:
                             return;
                     }

@@ -6,10 +6,10 @@ import java.util.UUID;
 
 public class NodeDTO {
     private UUID id;
-    private String researcherLabel;
-    private String instituteLabel;
+    private String label;
+    private int count = 0;
     public NodeDTO() {
-
+        this.count++;
     }
 
     public UUID getId() {
@@ -20,28 +20,28 @@ public class NodeDTO {
         this.id = id;
     }
 
-    public String getResearcherLabel() {
-        return researcherLabel;
+    public String getLabel() {
+        return label;
     }
 
-    public void setResearcherLabel(String researcherLabel) {
-        this.researcherLabel = researcherLabel;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
-    public String getInstituteLabel() {
-        return instituteLabel;
+    public int getCount() {
+        return count;
     }
 
-    public void setInstituteLabel(String instituteLabel) {
-        this.instituteLabel = instituteLabel;
+    public void addCount() {
+        this.count++;
     }
 
     public Map<String, Object> toJson() {
         Map<String, Object> json = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
         data.put("id", id.toString());
-        data.put("researcherLabel", researcherLabel);
-        data.put("instituteLabel", instituteLabel);
+        data.put("label", label);
+        data.put("count", count);
         json.put("data", data);
         return json;
     }

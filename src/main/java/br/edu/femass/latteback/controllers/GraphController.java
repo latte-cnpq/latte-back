@@ -67,7 +67,7 @@ public class GraphController {
     @Parameters({
             @Parameter(name = "researcherName", description = "Name of the researcher", in = ParameterIn.QUERY),
             @Parameter(name = "instituteName", description = "Name of the institute", in = ParameterIn.QUERY),
-            @Parameter(name = "productionType", description = "Production type", in = ParameterIn.QUERY, example = "ARTICLE"),
+            @Parameter(name = "productionType", description = "Production type", in = ParameterIn.QUERY, example = "ARTICLE or BOOK"),
             @Parameter(name = "nodeType", description = "Whether nodes are researchers or institutes", in = ParameterIn.QUERY)
     })
     public ResponseEntity<Object> filterCollaborations(
@@ -77,7 +77,7 @@ public class GraphController {
             @RequestParam(name = "nodeType", required = false) final String nodeType){
 
         try {
-            var filterCollab = graphService.getGraphDataByFilter(instituteName, productionType, researcherName);
+            var filterCollab = graphService.getGraphDataByFilter(instituteName, productionType, researcherName, nodeType);
 
             return ResponseEntity.status(HttpStatus.OK).body(filterCollab);
 
