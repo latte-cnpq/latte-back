@@ -102,7 +102,7 @@ public class GraphService implements GraphServiceInterface {
                 researcherEdgesMap.put(edgeKey, newEdge);
             }
         }
-        if (getAll && nodeType.equalsIgnoreCase("researcher")){
+        if (getAll && nodeType.equalsIgnoreCase("researcher") && instituteName.equals("") && researcherName.equals("")){
             List<Researcher> researchers = researcherRepository.findAll();
             for (Researcher researcher: researchers) {
                 if (!nodesMap.containsKey(researcher.getId())) {
@@ -113,7 +113,7 @@ public class GraphService implements GraphServiceInterface {
                     nodesMap.put(researcher.getId(), temp);}
             }
         }
-        if (getAll && nodeType.equalsIgnoreCase("institute")){
+        if (getAll && nodeType.equalsIgnoreCase("institute")&& instituteName.equals("") && researcherName.equals("")){
             List<Institute> institutes = instituteRepository.findAll();
             for (Institute institute: institutes) {
                 if (!nodesMap.containsKey(institute.getId())) {
