@@ -94,12 +94,16 @@ public class GraphService implements GraphServiceInterface {
                     newEdge.setSource(collab.getFirstAuthor().getId());
                     newEdge.setTarget(collab.getSecondAuthor().getId());
                 }
-                else if (firstInstitute.getId().compareTo(secondInstitute.getId()) != 0){
+                else if (!firstAuthor.getInstitute().getId().toString().equalsIgnoreCase(secondAuthor.getInstitute().getId().toString())){
+
                     newEdge.setSource(firstAuthor.getInstitute().getId());
                     newEdge.setTarget(secondAuthor.getInstitute().getId());
                 }
-                newEdge.setId(edgeKey);
-                researcherEdgesMap.put(edgeKey, newEdge);
+                if (newEdge.getSource() != null && newEdge.getTarget() != null) {
+
+                    newEdge.setId(edgeKey);
+                    researcherEdgesMap.put(edgeKey, newEdge);
+                }
             }
         }
         if (getAll && nodeType.equalsIgnoreCase("researcher") && instituteName.equals("") && researcherName.equals("")){
