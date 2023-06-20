@@ -95,7 +95,6 @@ public class GraphService implements GraphServiceInterface {
                     newEdge.setTarget(collab.getSecondAuthor().getId());
                 }
                 else if (!firstAuthor.getInstitute().getId().toString().equalsIgnoreCase(secondAuthor.getInstitute().getId().toString())){
-
                     newEdge.setSource(firstAuthor.getInstitute().getId());
                     newEdge.setTarget(secondAuthor.getInstitute().getId());
                 }
