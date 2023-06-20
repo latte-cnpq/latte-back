@@ -8,11 +8,10 @@ public class NodeDTO {
     private UUID id;
     private String label;
     private int count = 0;
-    private UUID instituteId;
-
     public NodeDTO() {
         this.count++;
     }
+
     public UUID getId() {
         return id;
     }
@@ -21,9 +20,6 @@ public class NodeDTO {
         this.id = id;
     }
 
-    public void setInstituteId(UUID instituteId) {
-        this.instituteId = instituteId;
-    }
 
     public void setLabel(String label) {
         this.label = label;
@@ -44,8 +40,6 @@ public class NodeDTO {
         data.put("id", id.toString());
         data.put("label", label);
         data.put("count", count);
-        if (instituteId != null)
-            data.put("instituteId", instituteId);
         json.put("data", data);
         return json;
     }
