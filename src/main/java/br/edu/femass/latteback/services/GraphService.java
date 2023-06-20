@@ -51,8 +51,10 @@ public class GraphService implements GraphServiceInterface {
                     nodesMap.get(firstAuthor.getId()).addCount();
                 }
                 else {
+
                     newNode.setId(firstAuthor.getId());
                     newNode.setLabel(firstAuthor.getName());
+                    newNode.setInstituteId(firstInstitute.getId());
                     nodesMap.put(firstAuthor.getId(), newNode);
                 }
 
@@ -62,6 +64,7 @@ public class GraphService implements GraphServiceInterface {
                 else {
                     newNode2.setId(secondAuthor.getId());
                     newNode2.setLabel(secondAuthor.getName());
+                    newNode2.setInstituteId(secondInstitute.getId());
                     nodesMap.put(secondAuthor.getId(), newNode2);
                 }
             }
@@ -113,6 +116,7 @@ public class GraphService implements GraphServiceInterface {
                     temp.setId(researcher.getId());
                     temp.setLabel(researcher.getName());
                     temp.setCount(0);
+                    temp.setInstituteId(researcher.getInstitute().getId());
                     nodesMap.put(researcher.getId(), temp);}
             }
         }
@@ -129,6 +133,20 @@ public class GraphService implements GraphServiceInterface {
             }
         }
         List<Map<String, Object>> nodeData = new ArrayList<>();
+        if (!researcherName.isEmpty() && nodesMap.isEmpty()){
+            NodeDTO temp = new NodeDTO();
+            Researcher researcher = researcherRepository.findByNameContainsIgnoreCase(researcherName).get(0);
+
+            if(nodeType.equalsIgnoreCase("researcher"))
+                temp.setLabel(researcher.getName());
+            else
+                temp.setLabel(researcher.getInstitute().getAcronym());
+            temp.setId(researcher.getId());
+            temp.setInstituteId(researcher.getInstitute().getId());
+            temp.setCount(0);
+            nodeData.add(temp.toJson());
+        }
+
 
         for (NodeDTO node : nodesMap.values()) {
             nodeData.add(node.toJson());
