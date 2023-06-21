@@ -21,6 +21,6 @@ public interface ResearcherServiceInterface {
 
     Long getResearcherTotalCount();
 
-    Page<Researcher> AdvancedSearch(String name, String instituteAcronym, Pageable pageable);
+    Page<Researcher> AdvancedSearch(String name, List<String> instituteAcronyms, Pageable pageable);
 
 }

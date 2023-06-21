@@ -307,8 +307,8 @@ public class ResearcherService implements ResearcherServiceInterface {
         return researcherRepository.count();
     }
 
-    public Page<Researcher> AdvancedSearch(String name, String instituteAcronym, Pageable pageable){
-        return researcherRepository.AdvancedSearch(name, instituteAcronym, pageable);
+    public Page<Researcher> AdvancedSearch(String name, List<String> instituteAcronyms, Pageable pageable){
+        return researcherRepository.AdvancedSearch(name, instituteAcronyms, pageable);
     }
 
 }
