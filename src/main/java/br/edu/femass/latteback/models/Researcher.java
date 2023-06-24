@@ -13,8 +13,6 @@ import java.util.UUID;
 public class Researcher {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    @JsonIgnore
     private UUID id;
     @Column(nullable = false, length = 100)
     private String name;

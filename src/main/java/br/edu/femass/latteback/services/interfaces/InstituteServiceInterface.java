@@ -14,6 +14,8 @@ public interface InstituteServiceInterface {
 
     Institute getById(UUID id);
 
+    Institute getByAcronym(String acronym);
+
     void delete(UUID id);
 
     Institute update(UUID id, Institute institute);

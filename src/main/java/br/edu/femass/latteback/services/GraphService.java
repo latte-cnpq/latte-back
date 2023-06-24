@@ -32,8 +32,12 @@ public class GraphService implements GraphServiceInterface {
         return collaborationRepository.findByInstituteName(instituteName);
     }
     //Todo: researcher name => researcher id
-    public GraphDataDTO getGraphDataByFilter(String instituteName, String productionType, String researcherName, String nodeType, Boolean getAll){
-        List<Collaboration> collaborationList = collaborationRepository.filterCollaborations(instituteName, productionType, researcherName);
+    public GraphDataDTO getGraphDataByFilter(String instituteName, String productionType, List<String> researcherName, String nodeType, Boolean getAll){
+        List<Collaboration> collaborationList = new ArrayList<>();
+        for( String researcher : researcherName){
+            for (Collaboration collaboration : collaborationRepository.filterCollaborations(instituteName, productionType, researcher))
+            collaborationList.add(collaboration);
+        }
 
         Map<UUID, NodeDTO> nodesMap = new HashMap<>();
 
@@ -81,7 +85,7 @@ public class GraphService implements GraphServiceInterface {
                         nodesMap.get(secondInstitute.getId()).addCount();
                     else {
                         newNode2.setId(secondInstitute.getId());
-                        newNode2.setLabel(secondInstitute.getName());
+                        newNode2.setLabel(secondInstitute.getAcronym());
                         nodesMap.put(secondInstitute.getId(), newNode2);
                     }
                 }
@@ -133,20 +137,6 @@ public class GraphService implements GraphServiceInterface {
             }
         }
         List<Map<String, Object>> nodeData = new ArrayList<>();
-        if (!researcherName.isEmpty() && nodesMap.isEmpty()){
-            NodeDTO temp = new NodeDTO();
-            Researcher researcher = researcherRepository.findByNameContainsIgnoreCase(researcherName).get(0);
-
-            if(nodeType.equalsIgnoreCase("researcher"))
-                temp.setLabel(researcher.getName());
-            else
-                temp.setLabel(researcher.getInstitute().getAcronym());
-            temp.setId(researcher.getId());
-            temp.setInstituteId(researcher.getInstitute().getId());
-            temp.setCount(0);
-            nodeData.add(temp.toJson());
-        }
-
 
         for (NodeDTO node : nodesMap.values()) {
             nodeData.add(node.toJson());

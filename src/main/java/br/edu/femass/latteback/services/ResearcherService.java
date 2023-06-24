@@ -4,8 +4,14 @@ import br.edu.femass.latteback.models.graph.Collaboration;
 import br.edu.femass.latteback.repositories.*;
 import br.edu.femass.latteback.services.interfaces.ResearcherServiceInterface;
 import br.edu.femass.latteback.utils.enums.ProductionType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -261,6 +267,37 @@ public class ResearcherService implements ResearcherServiceInterface {
         return researcherRepository.findAll();
     }
 
+    @PersistenceContext
+    EntityManager em;
+
+    @Override
+    public List<Researcher> getByInstitutes(List<String> instituteAcronyms) {
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Researcher> cq = cb.createQuery(Researcher.class);
+
+        Root<Researcher> researcherRoot = cq.from(Researcher.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (instituteAcronyms != null && !instituteAcronyms.isEmpty()) {
+            Join<Researcher, Institute> join = researcherRoot.join("institute");
+            predicates.add(join.get("acronym").in(instituteAcronyms));
+        }
+
+        if (!predicates.isEmpty()) {
+            cq.where(predicates.toArray(new Predicate[]{}));
+        }
+
+        TypedQuery<Researcher> query = em.createQuery(cq);
+
+        List<Researcher> result;
+
+        result = query.getResultList();
+
+        return result;
+    }
+
+
     public Researcher getById(UUID id) {
         if (id == null) {
             throw new IllegalArgumentException("ID procurado não pode ser nulo.");
@@ -307,8 +344,8 @@ public class ResearcherService implements ResearcherServiceInterface {
         return researcherRepository.count();
     }
 
-    public Page<Researcher> AdvancedSearch(String name, List<String> instituteAcronyms, Pageable pageable){
-        return researcherRepository.AdvancedSearch(name, instituteAcronyms, pageable);
+    public Page<Researcher> AdvancedSearch(String name, String instituteAcronym, Pageable pageable){
+        return researcherRepository.AdvancedSearch(name, instituteAcronym, pageable);
     }
 
 }

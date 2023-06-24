@@ -72,13 +72,13 @@ public class GraphController {
             @Parameter(name = "getAll", description = "Whether to retrieve nodes with no connection", in = ParameterIn.QUERY, example ="true or false")
     })
     public ResponseEntity<Object> filterCollaborations(
-            @RequestParam(name = "researcherName", required = false) final String researcherName,
+            @RequestParam(name = "researcherName", required = false) final List<String> researcherNames,
             @RequestParam(name = "instituteName", required = false) final String instituteName,
             @RequestParam(name = "productionType", required = false) final String productionType,
             @RequestParam(name = "nodeType") final String nodeType,
             @RequestParam(name= "getAll", defaultValue = "false") final Boolean getAll){
         try {
-            var filterCollab = graphService.getGraphDataByFilter(instituteName, productionType, researcherName, nodeType, getAll);
+            var filterCollab = graphService.getGraphDataByFilter(instituteName, productionType, researcherNames, nodeType, getAll);
 
             return ResponseEntity.status(HttpStatus.OK).body(filterCollab);
 

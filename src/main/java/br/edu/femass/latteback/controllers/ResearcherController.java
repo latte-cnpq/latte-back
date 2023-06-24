@@ -76,6 +76,22 @@ public class ResearcherController {
         }
     }
 
+    @GetMapping("/findByInstitutes")
+    @Operation(summary = "Find researcher by ID")
+    @Parameters({
+            @Parameter(name = "institute_acronyms", description = "List of institute acronyms", in = ParameterIn.QUERY),
+    })
+    public ResponseEntity<Object> getByInstitutes(
+            @RequestParam(name = "institute_acronyms", required = false) final List<String> instituteAcronyms
+    ) {
+        try {
+            var Researcher = researcherService.getByInstitutes(instituteAcronyms);
+            return ResponseEntity.status(HttpStatus.OK).body(Researcher);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/cache/{id}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation",
@@ -120,7 +136,7 @@ public class ResearcherController {
     })
     public ResponseEntity<Object> findByAdvancedSearch(
             @RequestParam(name = "name", required = false) final String name,
-            @RequestParam(name = "institute_acronym", required = false) final List<String> instituteAcronyms,
+            @RequestParam(name = "institute_acronym", required = false) final String instituteAcronym,
             @RequestParam(defaultValue = "0") final int page,
             @RequestParam(name = "perPage", defaultValue = "10") final int perPage,
             @RequestParam(defaultValue = "id") final String ordination,
@@ -130,7 +146,7 @@ public class ResearcherController {
             final Pageable pageable = PageRequest.of(page, perPage, Sort.by(direction, ordination));
             Page<Researcher> researchers = null;
 
-            researchers = researcherService.AdvancedSearch(name, instituteAcronyms, pageable);
+            researchers = researcherService.AdvancedSearch(name, instituteAcronym, pageable);
             return ResponseEntity.status(HttpStatus.OK).body(researchers);
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

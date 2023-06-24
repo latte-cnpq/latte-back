@@ -13,6 +13,8 @@ public interface ResearcherServiceInterface {
 
     List<Researcher> getAll();
 
+    List<Researcher> getByInstitutes(List<String> instituteAcronyms);
+
     Researcher getById(UUID id);
 
     void delete(UUID id);
@@ -21,6 +23,6 @@ public interface ResearcherServiceInterface {
 
     Long getResearcherTotalCount();
 
-    Page<Researcher> AdvancedSearch(String name, List<String> instituteAcronyms, Pageable pageable);
+    Page<Researcher> AdvancedSearch(String name, String instituteAcronym, Pageable pageable);
 
 }

@@ -58,6 +58,21 @@ public class InstituteService implements InstituteServiceInterface {
     }
 
     @Override
+    public Institute getByAcronym(String acronym) {
+        if(acronym.isBlank() || acronym.isBlank()){
+            throw new IllegalArgumentException("Acronumo procurado não pode ser nulo.");
+        }
+
+        Institute institute = instituteRepository.findInstituteByAcronymIs(acronym);
+
+        if(institute == null){
+            throw new IllegalArgumentException("Não há instituto cadastrado com esse acronimo");
+        }
+
+        return institute;
+    }
+
+    @Override
     public void delete(UUID id) {
 
         var existInstitute = instituteRepository.existsById(id);
