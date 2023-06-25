@@ -15,6 +15,9 @@ public interface CollaborationRepository extends JpaRepository<Collaboration, UU
             "JOIN r.institute i " +
             "WHERE i.name = :instituteName")
     List<Collaboration> findByInstituteName(@Param("instituteName") String instituteName);
+    @Query("SELECT c FROM Collaboration c " +
+            "WHERE (:type IS NULL OR LOWER(c.productionType) LIKE LOWER(concat('%', :type, '%'))) ")
+    List<Collaboration> findByProductionType(@Param("type") String type);
 
     @Query("SELECT c FROM Collaboration c " +
             "JOIN c.firstAuthor a1 " +

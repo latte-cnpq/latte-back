@@ -270,40 +270,37 @@ public class GraphService implements GraphServiceInterface {
         if (mostrarTodosVertices) {
             if (nodeType.equalsIgnoreCase("researcher")) {
                 for (Researcher researcher : researcherRepository.findAll()) {
-                    if (!nodesMap.containsKey(researcher.getId())) {
                         NodeDTO newNode = new NodeDTO();
                         newNode.setLabel(researcher.getName());
                         newNode.setId(researcher.getId());
                         nodesMap.put(researcher.getId(), newNode);
-                    }
                 }
             } else {
                 for (Institute institute : instituteRepository.findAll()) {
-                    if (!nodesMap.containsKey(institute.getId())) {
                         NodeDTO newNode = new NodeDTO();
                         newNode.setId(institute.getId());
                         newNode.setLabel(institute.getAcronym());
                         nodesMap.put(institute.getId(), newNode);
-                    }
                 }
             }
-        }else
+        } else
             if (researcherNames != null && !researcherNames.isEmpty()) {
-                for(String researcherName : researcherNames)
-                for (Researcher researcher:researcherRepository.findByNameContainsIgnoreCase(researcherName)){
-                    if (nodeType.equalsIgnoreCase("researcher")) {
-                        if (!nodesMap.containsKey(researcher.getId())) {
-                            NodeDTO newNode = new NodeDTO();
-                            newNode.setLabel(researcher.getName());
-                            newNode.setId(researcher.getId());
-                            nodesMap.put(researcher.getId(), newNode);
-                        }
-                    } else {
-                        if (!nodesMap.containsKey(researcher.getInstitute().getId())) {
-                            NodeDTO newNode = new NodeDTO();
-                            newNode.setId(researcher.getInstitute().getId());
-                            newNode.setLabel(researcher.getInstitute().getAcronym());
-                            nodesMap.put(researcher.getInstitute().getId(), newNode);
+                for(String researcherName : researcherNames) {
+                    for (Researcher researcher : researcherRepository.findByNameContainsIgnoreCase(researcherName)) {
+                        if (nodeType.equalsIgnoreCase("researcher")) {
+                            if (!nodesMap.containsKey(researcher.getId())) {
+                                NodeDTO newNode = new NodeDTO();
+                                newNode.setLabel(researcher.getName());
+                                newNode.setId(researcher.getId());
+                                nodesMap.put(researcher.getId(), newNode);
+                            }
+                        } else {
+                            if (!nodesMap.containsKey(researcher.getInstitute().getId())) {
+                                NodeDTO newNode = new NodeDTO();
+                                newNode.setId(researcher.getInstitute().getId());
+                                newNode.setLabel(researcher.getInstitute().getAcronym());
+                                nodesMap.put(researcher.getInstitute().getId(), newNode);
+                            }
                         }
                     }
                 }
@@ -397,20 +394,23 @@ public class GraphService implements GraphServiceInterface {
                     }
                 }
             }
-        } else */{
+        } else */
+        {
             if (researcherNames != null && !researcherNames.isEmpty()) {
                 for (String researcherName : researcherNames) {
                     collaborationList.addAll(collaborationRepository.filterCollaborations(productionType, researcherName));
                 }
             } else {
-                collaborationList.addAll(collaborationRepository.findAll());
+                collaborationList.addAll(collaborationRepository.findByProductionType(productionType));
             }
             //Mostra apenas colaborações entre pesq escolhidos
             for (Collaboration collab : collaborationList) {
-                if ((nodesMap.containsKey(collab.getFirstAuthor().getId()) &&
+                if (
+                        (nodesMap.containsKey(collab.getFirstAuthor().getId()) &&
                         nodesMap.containsKey(collab.getSecondAuthor().getId())) ||
                         (nodesMap.containsKey(collab.getFirstAuthor().getInstitute().getId()) &&
-                                nodesMap.containsKey(collab.getSecondAuthor().getInstitute().getId()))) {
+                         nodesMap.containsKey(collab.getSecondAuthor().getInstitute().getId()))
+                ) {
                     EdgeDTO newEdge = new EdgeDTO();
                     UUID smallerId;
                     UUID biggerId;
