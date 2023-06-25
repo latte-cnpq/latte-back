@@ -66,19 +66,15 @@ public class GraphController {
     @Operation(summary = "Searches for a collaboration with filter")
     @Parameters({
             @Parameter(name = "researcherName", description = "Name of the researcher", in = ParameterIn.QUERY),
-            @Parameter(name = "instituteName", description = "Name of the institute", in = ParameterIn.QUERY),
             @Parameter(name = "productionType", description = "Production type", in = ParameterIn.QUERY, example = "ARTICLE or BOOK"),
-            @Parameter(name = "nodeType", description = "Whether nodes are researchers or institutes", in = ParameterIn.QUERY, example = "institute or researcher"),
-            @Parameter(name = "getAll", description = "Whether to retrieve nodes with no connection", in = ParameterIn.QUERY, example ="true or false")
+            @Parameter(name = "nodeType", description = "Whether nodes are researchers or institutes", in = ParameterIn.QUERY, example = "institute or researcher")
     })
     public ResponseEntity<Object> filterCollaborations(
             @RequestParam(name = "researcherName", required = false) final List<String> researcherNames,
-            @RequestParam(name = "instituteName", required = false) final String instituteName,
             @RequestParam(name = "productionType", required = false) final String productionType,
-            @RequestParam(name = "nodeType") final String nodeType,
-            @RequestParam(name= "getAll", defaultValue = "false") final Boolean getAll){
+            @RequestParam(name = "nodeType") final String nodeType){
         try {
-            var filterCollab = graphService.getGraphDataByFilter(instituteName, productionType, researcherNames, nodeType, getAll);
+            var filterCollab = graphService.getGraphDataByFilters(productionType, researcherNames, nodeType);
 
             return ResponseEntity.status(HttpStatus.OK).body(filterCollab);
 

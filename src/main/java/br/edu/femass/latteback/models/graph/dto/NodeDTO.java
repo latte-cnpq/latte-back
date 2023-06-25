@@ -11,8 +11,13 @@ public class NodeDTO {
     private UUID instituteId;
 
     public NodeDTO() {
-        this.count++;
     }
+
+    public NodeDTO(UUID id, String label) {
+        this.id = id;
+        this.label = label;
+    }
+
     public UUID getId() {
         return id;
     }

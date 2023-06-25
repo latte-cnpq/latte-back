@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -38,5 +39,11 @@ public class Researcher {
         this.researcheridNumber = researcheridNumber;
         this.resume = resume;
     }
-
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Researcher that = (Researcher) o;
+        return Objects.equals(id, that.id);
+    }
 }

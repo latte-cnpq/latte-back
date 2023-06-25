@@ -11,7 +11,7 @@ public class EdgeDTO {
     private int repetitionCount = 0;
     private String id;
     public EdgeDTO() {
-        this.repetitionCount++;
+
     }
 
     public UUID getSource() {

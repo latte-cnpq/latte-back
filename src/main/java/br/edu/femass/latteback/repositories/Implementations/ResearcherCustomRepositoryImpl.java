@@ -28,7 +28,7 @@ public class ResearcherCustomRepositoryImpl implements ResearcherCustomRepositor
 
 
     @Override
-    public Page<Researcher> AdvancedSearch(String name, String institueAcronym, Pageable pageable) {
+    public Page<Researcher> AdvancedSearch(String name, String instituteAcronym, Pageable pageable) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Researcher> cq = cb.createQuery(Researcher.class);
 
@@ -39,9 +39,9 @@ public class ResearcherCustomRepositoryImpl implements ResearcherCustomRepositor
             predicates.add(cb.like(researcherRoot.get("name"), "%" + name + "%"));
         }
 
-        if (institueAcronym != null && !institueAcronym.isEmpty()) {
+        if (instituteAcronym != null && !instituteAcronym.isEmpty()) {
             Join<Researcher, Institute> join = researcherRoot.join("institute");
-            predicates.add(cb.like(join.get("acronym"), "%" + institueAcronym + "%"));
+            predicates.add(cb.like(join.get("acronym"), "%" + instituteAcronym + "%"));
         }
 
         if (!predicates.isEmpty()) {

@@ -77,16 +77,16 @@ public class ResearcherController {
     }
 
     @GetMapping("/findByInstitutes")
-    @Operation(summary = "Find researcher by ID")
+    @Operation(summary = "Find researchers by institute acronyms")
     @Parameters({
             @Parameter(name = "institute_acronyms", description = "List of institute acronyms", in = ParameterIn.QUERY),
     })
     public ResponseEntity<Object> getByInstitutes(
-            @RequestParam(name = "institute_acronyms", required = false) final List<String> instituteAcronyms
+            @RequestParam(name = "institute_acronyms") final List<String> instituteAcronyms
     ) {
         try {
-            var Researcher = researcherService.getByInstitutes(instituteAcronyms);
-            return ResponseEntity.status(HttpStatus.OK).body(Researcher);
+            var researchers = researcherService.getByInstitutes(instituteAcronyms);
+            return ResponseEntity.status(HttpStatus.OK).body(researchers);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

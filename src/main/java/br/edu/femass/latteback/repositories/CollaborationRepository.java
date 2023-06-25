@@ -19,13 +19,9 @@ public interface CollaborationRepository extends JpaRepository<Collaboration, UU
     @Query("SELECT c FROM Collaboration c " +
             "JOIN c.firstAuthor a1 " +
             "JOIN c.secondAuthor a2 " +
-            "JOIN a1.institute i1 " +
-            "JOIN a2.institute i2 " +
-            "WHERE (:instituteName IS NULL OR LOWER(i1.name) LIKE LOWER(concat('%', :instituteName, '%')) OR LOWER(i2.name) LIKE LOWER(concat('%', :instituteName, '%'))) " +
-            "AND (:type IS NULL OR LOWER(c.productionType) = LOWER(:type)) " +
+            "WHERE (:type IS NULL OR LOWER(c.productionType) = LOWER(:type)) " +
             "AND (:researcherName IS NULL OR LOWER(a1.name) LIKE LOWER(concat('%', :researcherName, '%')) OR LOWER(a2.name) LIKE LOWER(concat('%', :researcherName, '%')))")
-    List<Collaboration> filterCollaborations(@Param("instituteName") String instituteName,
-                                             @Param("type") String type,
+    List<Collaboration> filterCollaborations(@Param("type") String type,
                                              @Param("researcherName") String researcherName);
 
 
