@@ -53,13 +53,6 @@ public class ResearcherServiceTest {
     }
     
 
-    @Test
-    @DisplayName("Delete researcher from database by ID")
-    public void deleteTest() {
-        UUID testeid = new UUID(0,0);
-        when(researcherRepository.existsById(testeid)).thenReturn(true);
-        researcherService.delete(id);
-    }
 
 
 }

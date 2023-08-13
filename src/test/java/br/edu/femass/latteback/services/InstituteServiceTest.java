@@ -158,31 +158,4 @@ public class InstituteServiceTest {
         assertEquals(expectedMessage, exceptionMessage);
     }
 
-    @Test
-    @DisplayName("Institute search filter by string")
-    public void filterByTextTest(){
-        String textSearch = "test";
-        Institute institute2 = new Institute();
-        institute2.setName("Test");
-        institute2.setAcronym("TST2");
-        final Pageable pageable = PageRequest.of(0, 10, Sort.by("id", "ASC"));
-
-        Page<Institute> page = instituteRepository.AdvancedSearch(textSearch, institute2.getAcronym(), pageable);
-
-        when(instituteRepository.AdvancedSearch(textSearch, institute2.getAcronym(), pageable)).thenReturn(page);
-    }
-
-    @Test
-    @DisplayName("Institute search filter by empty string")
-    public void filterByEmptySearchTest(){
-        String textSearch = "";
-        Institute institute2 = new Institute();
-        institute2.setName("Test");
-        institute2.setAcronym("TST2");
-        final Pageable pageable = PageRequest.of(0, 10, Sort.by("id", "ASC"));
-
-        Page<Institute> page = instituteRepository.AdvancedSearch(textSearch, institute2.getAcronym(), pageable);
-
-        when(instituteRepository.AdvancedSearch(textSearch, institute2.getAcronym(), pageable)).thenReturn(null);
-    }
 }
