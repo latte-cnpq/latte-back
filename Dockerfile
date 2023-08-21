@@ -14,6 +14,6 @@ FROM openjdk:17-alpine
 WORKDIR /app
 
 COPY --from=MAVEN_BUILD /build/target/build.jar /app/
-COPY --from=MAVEN_BUILD /build/src/main/resources /app/resources
+COPY --from=MAVEN_BUILD /build/src/main/resources /app/src/main/resources
 
 ENTRYPOINT ["java", "-jar", "build.jar"]
